@@ -16,6 +16,7 @@ namespace TEST_THE_GITHUB
         string killThePresident = "Donald Trump";
         bool RightNow;
 
+        bool MemeStatus = true;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
