@@ -14,6 +14,9 @@ namespace TEST_THE_GITHUB
         int pizza;
         int walrus;
         string killThePresident = "Donald Trump";
+        int SmashMouth = 42;
+        string you = "are a rock star";
+        bool cake = false;
         bool RightNow;
 
         public Game1()
