@@ -11,6 +11,8 @@ namespace StealTheMonaLisa
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        KeyboardState kbstate;
+        Player1 p1;
 
         public Game1()
         {
@@ -39,6 +41,7 @@ namespace StealTheMonaLisa
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            p1 = new Player1(100, 100, 400, 400, 3, 2, 1, 0, 0, 0, 0.0, 0.0);
 
             // TODO: use this.Content to load your game content here
         }
@@ -61,7 +64,7 @@ namespace StealTheMonaLisa
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+           
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -78,6 +81,27 @@ namespace StealTheMonaLisa
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        public void MovePlayer(int x, int y)
+        {
+            if(kbstate.IsKeyDown(Keys.W))
+            {
+                x -= 1;
+            }
+            if (kbstate.IsKeyDown(Keys.A))
+            {
+                y -= 1;
+            }
+            if (kbstate.IsKeyDown(Keys.S))
+            {
+                x += 1;
+            }
+            if (kbstate.IsKeyDown(Keys.D))
+            {
+                y += 1;
+            }
+
         }
     }
 }
