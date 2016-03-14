@@ -1,6 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
 
 namespace StealTheMonaLisa
 {
@@ -12,6 +17,7 @@ namespace StealTheMonaLisa
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         KeyboardState kbstate;
+        Texture2D testImage;
         Player1 p1;
 
         public Game1()
@@ -41,7 +47,10 @@ namespace StealTheMonaLisa
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            // Testing Player Load
             p1 = new Player1(100, 100, 400, 400, 3, 2, 1, 0, 0, 0, 0.0, 0.0);
+            testImage = Content.Load<Texture2D>("Pizza.png");
+            p1.CurrentTexture = testImage;
 
             // TODO: use this.Content to load your game content here
         }
@@ -64,8 +73,9 @@ namespace StealTheMonaLisa
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-           
-            // TODO: Add your update logic here
+
+            // Testing player update
+            MovePlayer();
 
             base.Update(gameTime);
         }
@@ -77,29 +87,31 @@ namespace StealTheMonaLisa
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            // Testing player draw
+            spriteBatch.Begin();
+            spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        public void MovePlayer(int x, int y)
+        public void MovePlayer()
         {
             if(kbstate.IsKeyDown(Keys.W))
             {
-                x -= 1;
+                p1.X -= 1;
             }
             if (kbstate.IsKeyDown(Keys.A))
             {
-                y -= 1;
+                p1.Y -= 1;
             }
             if (kbstate.IsKeyDown(Keys.S))
             {
-                x += 1;
+                p1.X += 1;
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
-                y += 1;
+                p1.Y += 1;
             }
 
         }

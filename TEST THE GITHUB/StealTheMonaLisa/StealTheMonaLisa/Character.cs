@@ -18,7 +18,7 @@ namespace StealTheMonaLisa
         int level;
         double lvlexp;
         double infexp;
-        Rectangle box;
+        public Rectangle box;
         Texture2D currentTexture;
 
         public Character(int x, int y, int wdth, int hght, int hlth, int strngth, int spd, int mny, int infmy, int lvl, double lxp, double ixp)
