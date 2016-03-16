@@ -19,6 +19,22 @@ namespace StealTheMonaLisa
         KeyboardState kbstate;
         Texture2D testImage;
         Player1 p1;
+        GameState CurrentState;
+
+
+        enum GameState
+        {
+            StartMenu,
+            ExitTutorialMenu,
+            WorldMapMenu,
+            ExitWorldMapMenu,
+            MissionMenu,
+            Game,
+            PauseMenu,
+            ExitGameConfirmMenu,
+            MissionSuccessMenu,
+            MissionFailure
+        }
 
         public Game1()
         {
