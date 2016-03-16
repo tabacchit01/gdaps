@@ -20,6 +20,13 @@ namespace StealTheMonaLisa
         Texture2D testImage;
         Player1 p1;
         GameState CurrentState;
+        GameStats gstats;
+
+        // basic physics values
+        bool isMidair = false;
+        int gravity = 1;
+        int startingY = 0;
+
 
 
         enum GameState
@@ -50,7 +57,6 @@ namespace StealTheMonaLisa
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
 
             base.Initialize();
         }
@@ -64,7 +70,8 @@ namespace StealTheMonaLisa
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             // Testing Player Load
-            p1 = new Player1(100, 100, 200, 200, 3, 2, 1);
+            p1 = new Player1(100, 360, 100, 100, 3, 2, 1);
+            gstats = new GameStats(0, 0, 0, 0.0, 0.0);
             testImage = Content.Load<Texture2D>("Pizza.png");
             p1.CurrentTexture = testImage;
 
@@ -93,8 +100,18 @@ namespace StealTheMonaLisa
             // Getting keyboard state
             kbstate = Keyboard.GetState();
 
-            // Testing player update
+            // Testing player update, veritcal direction does not work if mid-air
             MovePlayer();
+
+            // Tests for jumping (Player jump returns the starting Y value)
+            if (isMidair == false && kbstate.IsKeyDown(Keys.Space))
+            {
+
+            }
+            else if (isMidair == true)
+            {
+
+            }
 
             base.Update(gameTime);
         }
@@ -106,6 +123,7 @@ namespace StealTheMonaLisa
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
             // Testing player draw
             spriteBatch.Begin();
             spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
@@ -116,23 +134,27 @@ namespace StealTheMonaLisa
 
         public void MovePlayer()
         {
-            if(kbstate.IsKeyDown(Keys.W))
+            if(isMidair == false)
             {
-                p1.Y -= 5;
+                if (kbstate.IsKeyDown(Keys.W))
+                {
+                    p1.Y -= 4;
+                }
+                if (kbstate.IsKeyDown(Keys.S))
+                {
+                    p1.Y += 4;
+                }
             }
             if (kbstate.IsKeyDown(Keys.A))
             {
-                p1.X -= 5;
-            }
-            if (kbstate.IsKeyDown(Keys.S))
-            {
-                p1.Y += 5;
+                p1.X -= 4;
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
-                p1.X += 5;
+                p1.X += 4;
             }
 
         }
+
     }
 }
