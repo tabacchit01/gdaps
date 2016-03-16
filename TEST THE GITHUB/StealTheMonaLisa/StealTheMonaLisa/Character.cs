@@ -13,25 +13,15 @@ namespace StealTheMonaLisa
         int health;
         int Strength;
         int speed;
-        int money;
-        int infamy;
-        int level;
-        double lvlexp;
-        double infexp;
         public Rectangle box;
         Texture2D currentTexture;
 
-        public Character(int x, int y, int wdth, int hght, int hlth, int strngth, int spd, int mny, int infmy, int lvl, double lxp, double ixp)
+        public Character(int x, int y, int wdth, int hght, int hlth, int strngth, int spd)
         {
             box = new Rectangle(x, y, wdth, hght);
             health = hlth;
             Strength = strngth;
             speed = spd;
-            money = mny;
-            infamy = infmy;
-            level = lvl;
-            lvlexp = lxp;
-            infexp = ixp;
         }
 
         public int X

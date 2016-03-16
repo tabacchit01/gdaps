@@ -48,7 +48,7 @@ namespace StealTheMonaLisa
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             // Testing Player Load
-            p1 = new Player1(100, 100, 400, 400, 3, 2, 1, 0, 0, 0, 0.0, 0.0);
+            p1 = new Player1(100, 100, 200, 200, 3, 2, 1);
             testImage = Content.Load<Texture2D>("Pizza.png");
             p1.CurrentTexture = testImage;
 
@@ -73,6 +73,9 @@ namespace StealTheMonaLisa
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            // Getting keyboard state
+            kbstate = Keyboard.GetState();
 
             // Testing player update
             MovePlayer();
@@ -99,19 +102,19 @@ namespace StealTheMonaLisa
         {
             if(kbstate.IsKeyDown(Keys.W))
             {
-                p1.X -= 1;
+                p1.Y -= 5;
             }
             if (kbstate.IsKeyDown(Keys.A))
             {
-                p1.Y -= 1;
+                p1.X -= 5;
             }
             if (kbstate.IsKeyDown(Keys.S))
             {
-                p1.X += 1;
+                p1.Y += 5;
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
-                p1.Y += 1;
+                p1.X += 5;
             }
 
         }
