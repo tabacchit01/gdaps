@@ -34,6 +34,18 @@ namespace StealTheMonaLisa
             get { return box.Y; }
             set { box = new Rectangle(box.X, value, box.Width, box.Height); }
         }
+
+        public int Width
+        {
+            get { return box.Width; }
+            set { box = new Rectangle(box.X, box.Y, value, box.Height); }
+        }
+
+        public int Height
+        {
+            get { return box.Height; }
+            set { box = new Rectangle(box.X, box.Y, box.Width, value); }
+        }
         public Texture2D CurrentTexture
         {
             get { return currentTexture; }

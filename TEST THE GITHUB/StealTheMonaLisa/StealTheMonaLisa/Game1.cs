@@ -14,19 +14,27 @@ namespace StealTheMonaLisa
     /// </summary>
     public class Game1 : Game
     {
+        // Objects
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         KeyboardState kbstate;
         Texture2D testImage;
         Player1 p1;
-        GameState CurrentState;
         GameStats gstats;
 
-        // basic physics values
+        // Enums
+        GameState CurrentState;
+        CharacterState CharState = CharacterState.FaceRight;
+
+        // basic physics values (Remove tempGround when we have solid ground blocks)
         int tempGround = 360;
         bool isJumping = false;
         int gravity = 0;
+        int Runspeed = 0;
+        int Sprint = 0;
+        int friction = 0;
 
+        // Handles the various states the game will be in
         enum GameState
         {
             StartMenu,
@@ -39,6 +47,16 @@ namespace StealTheMonaLisa
             ExitGameConfirmMenu,
             MissionSuccessMenu,
             MissionFailure
+        }
+
+        // Handles each state for the character
+        enum CharacterState
+        {
+            FaceLeft,
+            FaceRight,
+            MoveLeft,
+            MoveRight,
+            Jump,
         }
 
         public Game1()
@@ -98,10 +116,10 @@ namespace StealTheMonaLisa
             // Getting keyboard state
             kbstate = Keyboard.GetState();
 
-            // Testing player update
+            // Moves the player using a switch statement
             MovePlayer();
 
-            // Handles jumping
+            // Handles jumping once the jump state is active in MovePlayer
             if (isJumping == true)
             {
                 p1.Y -= 13 - (gravity / 2);
@@ -134,24 +152,49 @@ namespace StealTheMonaLisa
 
         public void MovePlayer()
         {
-            if (kbstate.IsKeyDown(Keys.W))
+            // Handles spriting (if shift is held, speed is increased)
+            if(kbstate.IsKeyDown(Keys.LeftShift) || kbstate.IsKeyDown(Keys.RightShift))
+            {
+                Sprint++;
+                if(Sprint >= 6)
+                {
+                    Sprint = 6;
+                }
+            }
+            else
+            {
+                Sprint--;
+                if (Sprint <= 0)
+                {
+                    Sprint = 0;
+                }
+            }
+
+            // Switches between various character states
+            // FaceRight, FaceLeft, MoveRight, MoveLeft
+
+            if(kbstate.IsKeyDown(Keys.W))
             {
                 isJumping = true;
             }
             if (kbstate.IsKeyDown(Keys.A))
             {
-                p1.X -= 6;
+                Runspeed++;
+                if(Runspeed >= 6)
+                {
+                    Runspeed = 6;
+                }
+                p1.X -= Runspeed + Sprint;
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
-                p1.X += 6;
+                Runspeed++;
+                if (Runspeed >= 6)
+                {
+                    Runspeed = 6;
+                }
+                p1.X += Runspeed + Sprint;
             }
-            if (kbstate.IsKeyDown(Keys.S))
-            {
-
-            }
-
         }
-
     }
 }
