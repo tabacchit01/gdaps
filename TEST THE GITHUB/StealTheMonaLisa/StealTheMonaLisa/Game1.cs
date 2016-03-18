@@ -23,11 +23,9 @@ namespace StealTheMonaLisa
         GameStats gstats;
 
         // basic physics values
-        bool isMidair = false;
-        int gravity = 1;
-        int startingY = 0;
-
-
+        int tempGround = 360;
+        bool isJumping = false;
+        int gravity = 0;
 
         enum GameState
         {
@@ -100,17 +98,19 @@ namespace StealTheMonaLisa
             // Getting keyboard state
             kbstate = Keyboard.GetState();
 
-            // Testing player update, veritcal direction does not work if mid-air
+            // Testing player update
             MovePlayer();
 
-            // Tests for jumping (Player jump returns the starting Y value)
-            if (isMidair == false && kbstate.IsKeyDown(Keys.Space))
+            // Handles jumping
+            if (isJumping == true)
             {
-
-            }
-            else if (isMidair == true)
-            {
-
+                p1.Y -= 13 - (gravity / 2);
+                gravity++;
+                if (p1.Y == tempGround)
+                {
+                   isJumping = false;
+                   gravity = 0;
+                }
             }
 
             base.Update(gameTime);
@@ -134,24 +134,21 @@ namespace StealTheMonaLisa
 
         public void MovePlayer()
         {
-            if(isMidair == false)
+            if (kbstate.IsKeyDown(Keys.W))
             {
-                if (kbstate.IsKeyDown(Keys.W))
-                {
-                    p1.Y -= 4;
-                }
-                if (kbstate.IsKeyDown(Keys.S))
-                {
-                    p1.Y += 4;
-                }
+                isJumping = true;
             }
             if (kbstate.IsKeyDown(Keys.A))
             {
-                p1.X -= 4;
+                p1.X -= 6;
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
-                p1.X += 4;
+                p1.X += 6;
+            }
+            if (kbstate.IsKeyDown(Keys.S))
+            {
+
             }
 
         }
