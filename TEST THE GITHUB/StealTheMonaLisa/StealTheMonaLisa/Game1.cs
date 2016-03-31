@@ -22,6 +22,8 @@ namespace StealTheMonaLisa
         Player1 p1;
         GameStats gstats;
 
+        //HOI, IM AN GREEN TEXT
+
         Texture2D tileA;
         Texture2D tileB;
         Texture2D tileC;
