@@ -22,6 +22,8 @@ namespace StealTheMonaLisa
         Player1 p1;
         GameStats gstats;
 
+        StreamReader level;
+
         //HOI, IM AN GREEN TEXT
         //why wont this work
         //HOIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
@@ -88,6 +90,7 @@ namespace StealTheMonaLisa
             rects = new List<tileClass>();
 
             base.Initialize();
+
         }
 
         /// <summary>
@@ -107,6 +110,8 @@ namespace StealTheMonaLisa
             tileA = Content.Load<Texture2D>("tileA.png");
             tileB = Content.Load<Texture2D>("tileB.png");
             tileC = Content.Load<Texture2D>("tileC.png");
+
+            textTile();
 
             // TODO: use this.Content to load your game content here
         }
@@ -150,7 +155,7 @@ namespace StealTheMonaLisa
 
             base.Update(gameTime);
 
-        }    
+        }
         private void textTile()
         {
 
@@ -167,62 +172,52 @@ namespace StealTheMonaLisa
             try
             {
 
-                StreamReader level = new StreamReader("levelText.txt");
+                level = new StreamReader("Content/levelText.txt");
 
-                String line = null;
+                string line = null;
 
                 while ((line = level.ReadLine()) != null)
                 {
 
+                    XX = 0;
+
                     int length = line.Length;
 
-                    while ((line = level.ReadLine()) != null)
+                    for (int i = 0; i < length; i++)
                     {
 
-                        XX = 0;
+                        //int tileRNG = rng.Next(1, 4);
 
-                        for (int i = 0; i <= length; i++)
+                        if (line[i] == 'A')
                         {
 
-                            //int tileRNG = rng.Next(1, 4);
+                            t1 = new tileClass(XX, YY, 50, 50, tileA);
 
-                            if (line[i] == 'A')
-                            {
+                            rects.Add(t1);
 
-                                t1 = new tileClass(XX, YY, 50, 50, tileA);
+                        }
+                        if (line[i] == 'B')
+                        {
 
-                                rects.Add(t1);
+                            t2 = new tileClass(XX, YY, 50, 50, tileB);
 
-                            }
-                            if (line[i] == 'B')
-                            {
+                            rects.Add(t2);
 
-                                t2 = new tileClass(XX, YY, 50, 50, tileB);
+                        }
+                        if (line[i] == 'C')
+                        {
 
-                                rects.Add(t2);
+                            t3 = new tileClass(XX, YY, 50, 50, tileC);
 
-                            }
-                            if (line[i] == 'C')
-                            {
-
-                                t3 = new tileClass(XX, YY, 50, 50, tileC);
-
-                                rects.Add(t3);
-
-                            }
-
-                            if (i == length)
-                            {
-
-                                YY += 50;
-
-                            }
-
-                            XX += 50;
+                            rects.Add(t3);
 
                         }
 
+                        XX += 50;
+
                     }
+
+                    YY += 50;
 
                 }
 
@@ -266,10 +261,10 @@ namespace StealTheMonaLisa
         public void MovePlayer()
         {
             // Handles spriting (if shift is held, speed is increased)
-            if(kbstate.IsKeyDown(Keys.LeftShift) || kbstate.IsKeyDown(Keys.RightShift))
+            if (kbstate.IsKeyDown(Keys.LeftShift) || kbstate.IsKeyDown(Keys.RightShift))
             {
                 Sprint++;
-                if(Sprint >= 6)
+                if (Sprint >= 6)
                 {
                     Sprint = 6;
                 }
@@ -286,14 +281,14 @@ namespace StealTheMonaLisa
             // Switches between various character states
             // FaceRight, FaceLeft, MoveRight, MoveLeft
 
-            if(kbstate.IsKeyDown(Keys.W))
+            if (kbstate.IsKeyDown(Keys.W))
             {
                 isJumping = true;
             }
             if (kbstate.IsKeyDown(Keys.A))
             {
                 Runspeed++;
-                if(Runspeed >= 6)
+                if (Runspeed >= 6)
                 {
                     Runspeed = 6;
                 }
