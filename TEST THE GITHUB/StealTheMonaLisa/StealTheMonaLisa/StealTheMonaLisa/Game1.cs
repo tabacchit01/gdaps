@@ -178,7 +178,7 @@ namespace StealTheMonaLisa
 
                 int count = File.ReadLines("Content/levelText.txt").Count();
 
-                YY = GraphicsDevice.Viewport.Height - (count * 50);
+                YY = GraphicsDevice.Viewport.Height - (count*50);
 
                 while ((line = level.ReadLine()) != null)
                 {
