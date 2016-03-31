@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System.IO;
 
 namespace StealTheMonaLisa
 {
@@ -21,6 +21,13 @@ namespace StealTheMonaLisa
         Texture2D testImage;
         Player1 p1;
         GameStats gstats;
+
+        Texture2D tileA;
+        Texture2D tileB;
+        Texture2D tileC;
+        Random rng = new Random();
+
+        List<tileClass> rects; //a list of collectibles
 
         // Enums
         GameState CurrentState;
@@ -74,6 +81,8 @@ namespace StealTheMonaLisa
         protected override void Initialize()
         {
 
+            rects = new List<tileClass>();
+
             base.Initialize();
         }
 
@@ -90,6 +99,10 @@ namespace StealTheMonaLisa
             gstats = new GameStats(0, 0, 0, 0.0, 0.0);
             testImage = Content.Load<Texture2D>("Pizza.png");
             p1.CurrentTexture = testImage;
+
+            tileA = Content.Load<Texture2D>("tileA.png");
+            tileB = Content.Load<Texture2D>("tileB.png");
+            tileC = Content.Load<Texture2D>("tileC.png");
 
             // TODO: use this.Content to load your game content here
         }
@@ -126,12 +139,100 @@ namespace StealTheMonaLisa
                 gravity++;
                 if (p1.Y == tempGround)
                 {
-                   isJumping = false;
-                   gravity = 0;
+                    isJumping = false;
+                    gravity = 0;
                 }
             }
 
             base.Update(gameTime);
+
+        }    
+        private void textTile()
+        {
+
+            int XX = 0;
+
+            int YY = 0;
+
+            tileClass t1;
+            tileClass t2;
+            tileClass t3;
+
+            rects.Clear();
+
+            try
+            {
+
+                StreamReader level = new StreamReader("levelText.txt");
+
+                String line = null;
+
+                while ((line = level.ReadLine()) != null)
+                {
+
+                    int length = line.Length;
+
+                    while ((line = level.ReadLine()) != null)
+                    {
+
+                        XX = 0;
+
+                        for (int i = 0; i <= length; i++)
+                        {
+
+                            //int tileRNG = rng.Next(1, 4);
+
+                            if (line[i] == 'A')
+                            {
+
+                                t1 = new tileClass(XX, YY, 50, 50, tileA);
+
+                                rects.Add(t1);
+
+                            }
+                            if (line[i] == 'B')
+                            {
+
+                                t2 = new tileClass(XX, YY, 50, 50, tileB);
+
+                                rects.Add(t2);
+
+                            }
+                            if (line[i] == 'C')
+                            {
+
+                                t3 = new tileClass(XX, YY, 50, 50, tileC);
+
+                                rects.Add(t3);
+
+                            }
+
+                            if (i == length)
+                            {
+
+                                YY += 50;
+
+                            }
+
+                            XX += 50;
+
+                        }
+
+                    }
+
+                }
+
+                level.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine("File is icompatible; Loop may be absolute shite");
+                Console.WriteLine(e.Message);
+
+            }
+
         }
 
         /// <summary>
@@ -144,6 +245,14 @@ namespace StealTheMonaLisa
 
             // Testing player draw
             spriteBatch.Begin();
+
+            foreach (tileClass col in rects) //draws each collectible that is present in the array
+            {
+
+                col.GameObjectDraw(spriteBatch);
+
+            }
+
             spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
             spriteBatch.End();
 
