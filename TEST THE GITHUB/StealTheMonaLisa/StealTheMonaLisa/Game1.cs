@@ -23,6 +23,7 @@ namespace StealTheMonaLisa
         GameStats gstats;
 
         //HOI, IM AN GREEN TEXT
+        //why wont this work
 
         Texture2D tileA;
         Texture2D tileB;
