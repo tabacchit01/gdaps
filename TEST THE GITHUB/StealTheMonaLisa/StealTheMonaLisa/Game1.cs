@@ -18,6 +18,7 @@ namespace StealTheMonaLisa
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         KeyboardState kbstate;
+        KeyboardState previousKbState;
         Texture2D testImage;
         Player1 p1;
         GameStats gstats;
@@ -45,7 +46,9 @@ namespace StealTheMonaLisa
         int gravity = 0;
         int Runspeed = 0;
         int Sprint = 0;
-        int friction = 0;
+        int endurance = 200;
+        bool RunLeft = false;
+        bool RunRight = false;
 
         // Handles the various states the game will be in
         enum GameState
@@ -136,9 +139,10 @@ namespace StealTheMonaLisa
                 Exit();
 
             // Getting keyboard state
+            previousKbState = kbstate;
             kbstate = Keyboard.GetState();
 
-            // Moves the player using a switch statement
+            // Moves the player
             MovePlayer();
 
             // Handles jumping once the jump state is active in MovePlayer
@@ -262,15 +266,35 @@ namespace StealTheMonaLisa
             base.Draw(gameTime);
         }
 
+        // Handles basic movement (Left/Right, Sprinting, Jumping)
+        // Also handles momentum and endurance for sprinting
+
         public void MovePlayer()
         {
             // Handles spriting (if shift is held, speed is increased)
             if (kbstate.IsKeyDown(Keys.LeftShift) || kbstate.IsKeyDown(Keys.RightShift))
             {
-                Sprint++;
-                if (Sprint >= 6)
+                if (endurance > 0)
                 {
-                    Sprint = 6;
+                    Sprint++;
+                    if (Sprint >= 6)
+                    {
+                        Sprint = 6;
+                    }
+                    endurance--;
+                }
+                else
+                {
+                    Sprint--;
+                    if (Sprint <= 0)
+                    {
+                        Sprint = 0;
+                        endurance++;
+                        if (endurance >= 200)
+                        {
+                            endurance = 200;
+                        }
+                    }
                 }
             }
             else
@@ -279,11 +303,15 @@ namespace StealTheMonaLisa
                 if (Sprint <= 0)
                 {
                     Sprint = 0;
+                    endurance++;
+                    if(endurance >= 200)
+                    {
+                        endurance = 200;
+                    }
                 }
             }
 
-            // Switches between various character states
-            // FaceRight, FaceLeft, MoveRight, MoveLeft
+            // Handles moving left and right as well as jumping
 
             if (kbstate.IsKeyDown(Keys.W))
             {
@@ -291,21 +319,49 @@ namespace StealTheMonaLisa
             }
             if (kbstate.IsKeyDown(Keys.A))
             {
+                RunLeft = true;
+                RunRight = false;
                 Runspeed++;
-                if (Runspeed >= 6)
+                if (Runspeed >= 7)
                 {
-                    Runspeed = 6;
+                    Runspeed = 7;
                 }
                 p1.X -= Runspeed + Sprint;
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
+                RunRight = true;
+                RunLeft = false;
                 Runspeed++;
-                if (Runspeed >= 6)
+                if (Runspeed >= 7)
                 {
-                    Runspeed = 6;
+                    Runspeed = 7;
                 }
                 p1.X += Runspeed + Sprint;
+            }
+
+            // Checks to see if the player has stopped moving
+            // if so they are slowed down over time
+
+            if (kbstate.IsKeyUp(Keys.D) && kbstate.IsKeyUp(Keys.A) && RunRight == true)
+            {
+                Runspeed--;
+                if (Runspeed <= 0)
+                {
+                    Runspeed = 0;
+                    RunRight = false;
+                }
+                p1.X += Runspeed + Sprint;
+            }
+            if (kbstate.IsKeyUp(Keys.A) && kbstate.IsKeyUp(Keys.D) && RunLeft == true)
+            {
+                Runspeed--;
+                if (Runspeed <= 0)
+                {
+                    Runspeed = 0;
+                    RunLeft = false;
+                }
+                p1.X -= Runspeed + Sprint;
             }
         }
     }
