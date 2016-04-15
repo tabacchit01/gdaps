@@ -25,10 +25,6 @@ namespace StealTheMonaLisa
 
         StreamReader level;
 
-        //HOI, IM AN GREEN TEXT
-        //why wont this work
-        //HOIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-
         Texture2D tileA;
         Texture2D tileB;
         Texture2D tileC;
@@ -37,12 +33,13 @@ namespace StealTheMonaLisa
         List<tileClass> rects; //a list of collectibles
 
         // Enums
-        GameState CurrentState;
+        GameState CurrentState = GameState.StartMenu;
         CharacterState CharState = CharacterState.FaceRight;
 
         // basic physics values (Remove tempGround when we have solid ground blocks)
         int tempGround = 360;
         bool isJumping = false;
+        bool isOnGround = true;
         int gravity = 0;
         int Runspeed = 0;
         int Sprint = 0;
@@ -54,15 +51,15 @@ namespace StealTheMonaLisa
         enum GameState
         {
             StartMenu,
-            ExitTutorialMenu,
-            WorldMapMenu,
-            ExitWorldMapMenu,
-            MissionMenu,
+            //ExitTutorialMenu,
+            //WorldMapMenu,
+            //ExitWorldMapMenu,
+            //MissionMenu,
             Game,
             PauseMenu,
-            ExitGameConfirmMenu,
-            MissionSuccessMenu,
-            MissionFailure
+            //ExitGameConfirmMenu,
+            //MissionSuccessMenu,
+            //MissionFailure
         }
 
         // Handles each state for the character
@@ -142,19 +139,31 @@ namespace StealTheMonaLisa
             previousKbState = kbstate;
             kbstate = Keyboard.GetState();
 
-            // Moves the player
-            MovePlayer();
-
-            // Handles jumping once the jump state is active in MovePlayer
-            if (isJumping == true)
+            switch (CurrentState)
             {
-                p1.Y -= 13 - (gravity / 2);
-                gravity++;
-                if (p1.Y == tempGround)
-                {
-                    isJumping = false;
-                    gravity = 0;
-                }
+                case GameState.StartMenu:
+
+                    // Goes to the main game after pressing enter
+                    if(kbstate.IsKeyDown(Keys.Enter))
+                    {
+                        CurrentState = GameState.Game;
+                    }
+                    break;
+
+                case GameState.Game:
+
+                    // Moves the player
+                    MovePlayer();
+
+                    // Handles jumping and gravity for the player
+                    PlayerGravity();
+
+                    break;
+
+                case GameState.PauseMenu:
+
+                    break;
+
             }
 
             base.Update(gameTime);
@@ -253,14 +262,31 @@ namespace StealTheMonaLisa
             // Testing player draw
             spriteBatch.Begin();
 
-            foreach (tileClass col in rects) //draws each collectible that is present in the array
+            switch(CurrentState)
             {
+                case GameState.StartMenu:
 
-                col.GameObjectDraw(spriteBatch);
+                    break;
 
+                case GameState.Game:
+
+                    // Draws for the main game
+                    foreach (tileClass col in rects) //draws each collectible that is present in the array
+                    {
+
+                        col.GameObjectDraw(spriteBatch);
+
+                    }
+
+                    spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
+
+                    break;
+
+                case GameState.PauseMenu:
+
+                    break;
             }
 
-            spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -304,7 +330,7 @@ namespace StealTheMonaLisa
                 {
                     Sprint = 0;
                     endurance++;
-                    if(endurance >= 200)
+                    if (endurance >= 200)
                     {
                         endurance = 200;
                     }
@@ -364,5 +390,30 @@ namespace StealTheMonaLisa
                 p1.X -= Runspeed + Sprint;
             }
         }
+
+        public void PlayerGravity()
+        {
+            if (isJumping == true)
+            {
+                p1.Y -= 13 - (gravity / 2);
+                gravity++;
+                if (p1.Y >= tempGround)
+                {
+                    isJumping = false;
+                    gravity = 0;
+                }
+            }
+            if (isOnGround == false)
+            {
+                p1.Y -= 0 - (gravity / 2);
+                gravity++;
+                if (p1.Y >= tempGround)
+                {
+                    isOnGround = true;
+                    gravity = 0;
+                }
+            }
+        }
+
+        }
     }
-}
