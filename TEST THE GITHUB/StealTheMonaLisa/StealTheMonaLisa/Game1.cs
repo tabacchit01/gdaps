@@ -177,8 +177,6 @@ namespace StealTheMonaLisa
             int YY = 0;
 
             tileClass t1;
-            tileClass t2;
-            tileClass t3;
 
             rects.Clear();
 
@@ -216,17 +214,15 @@ namespace StealTheMonaLisa
                         if (line[i] == 'B')
                         {
 
-                            t2 = new tileClass(XX, YY, 50, 50, tileB);
+                            t1 = new tileClass(XX, YY, 50, 50, tileB);
 
-                            rects.Add(t2);
+                            rects.Add(t1);
 
                         }
                         if (line[i] == 'C')
                         {
 
-                            t3 = new tileClass(XX, YY, 50, 50, tileC);
-
-                            rects.Add(t3);
+                            //CREATES BLANK
 
                         }
 
@@ -352,6 +348,17 @@ namespace StealTheMonaLisa
                 {
                     Runspeed = 7;
                 }
+
+                if (p1.X < (GraphicsDevice.Viewport.Width / 2))
+                {
+                    foreach (tileClass col in rects) //scrolls collectibles
+                    {
+
+                        col.TileX += 7;
+
+                    }
+                }
+
                 p1.X -= Runspeed + Sprint;
             }
             if (kbstate.IsKeyDown(Keys.D))
@@ -363,6 +370,17 @@ namespace StealTheMonaLisa
                 {
                     Runspeed = 7;
                 }
+
+                if (p1.X >= (GraphicsDevice.Viewport.Width / 2))
+                {
+                    foreach (tileClass col in rects) //scrolls collectibles
+                    {
+
+                        col.TileX -= 7;
+
+                    }
+                }
+
                 p1.X += Runspeed + Sprint;
             }
 
