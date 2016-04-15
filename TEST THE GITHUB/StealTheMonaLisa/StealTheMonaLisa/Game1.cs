@@ -349,7 +349,7 @@ namespace StealTheMonaLisa
                     Runspeed = 7;
                 }
 
-                if (p1.X < (GraphicsDevice.Viewport.Width / 2))
+                if (p1.X <= (GraphicsDevice.Viewport.Width / 2))
                 {
                     foreach (tileClass col in rects) //scrolls collectibles
                     {
@@ -359,7 +359,10 @@ namespace StealTheMonaLisa
                     }
                 }
 
-                p1.X -= Runspeed + Sprint;
+                else
+                {
+                    p1.X -= Runspeed + Sprint;
+                }
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
@@ -381,7 +384,10 @@ namespace StealTheMonaLisa
                     }
                 }
 
-                p1.X += Runspeed + Sprint;
+                else
+                {
+                    p1.X += Runspeed + Sprint;
+                }
             }
 
             // Checks to see if the player has stopped moving
