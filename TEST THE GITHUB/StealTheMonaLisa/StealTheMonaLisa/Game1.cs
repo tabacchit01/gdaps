@@ -37,7 +37,7 @@ namespace StealTheMonaLisa
         CharacterState CharState = CharacterState.FaceRight;
 
         // basic physics values (Remove tempGround when we have solid ground blocks)
-        int tempGround = 360;
+        int tempGround = 330;
         bool isJumping = false;
         bool isOnGround = true;
         int gravity = 0;
@@ -102,7 +102,7 @@ namespace StealTheMonaLisa
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             // Testing Player Load
-            p1 = new Player1(100, 360, 100, 100, 3, 2, 1);
+            p1 = new Player1(100, 330, 100, 100, 3, 2, 1);
             gstats = new GameStats(0, 0, 0, 0.0, 0.0);
             testImage = Content.Load<Texture2D>("Pizza.png");
             p1.CurrentTexture = testImage;
@@ -349,7 +349,7 @@ namespace StealTheMonaLisa
                     Runspeed = 7;
                 }
 
-                if (p1.X <= (GraphicsDevice.Viewport.Width / 2))
+                /*if (p1.X <= (GraphicsDevice.Viewport.Width / 2))
                 {
                     foreach (tileClass col in rects) //scrolls collectibles
                     {
@@ -357,12 +357,9 @@ namespace StealTheMonaLisa
                         col.TileX += 7;
 
                     }
-                }
+                }*/
 
-                else
-                {
-                    p1.X -= Runspeed + Sprint;
-                }
+                p1.X -= Runspeed + Sprint;
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
@@ -374,7 +371,7 @@ namespace StealTheMonaLisa
                     Runspeed = 7;
                 }
 
-                if (p1.X >= (GraphicsDevice.Viewport.Width / 2))
+                /*if (p1.X >= (GraphicsDevice.Viewport.Width / 2))
                 {
                     foreach (tileClass col in rects) //scrolls collectibles
                     {
@@ -382,12 +379,9 @@ namespace StealTheMonaLisa
                         col.TileX -= 7;
 
                     }
-                }
+                }*/
 
-                else
-                {
-                    p1.X += Runspeed + Sprint;
-                }
+                p1.X += Runspeed + Sprint;
             }
 
             // Checks to see if the player has stopped moving
