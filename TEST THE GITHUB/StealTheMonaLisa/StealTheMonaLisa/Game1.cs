@@ -25,10 +25,35 @@ namespace StealTheMonaLisa
 
         StreamReader level;
 
+        private WalkState currentState;
+
+        enum WalkState
+        {
+
+            FaceLeft,
+            WalkLeft,
+            FaceRight,
+            WalkRight
+
+        }
+
+
         Texture2D tileA;
         Texture2D tileB;
         Texture2D tileC;
+        Texture2D spriteSheet;
         Random rng = new Random();
+        Vector2 playerLOC;
+
+        int frame;              // The current animation frame
+        double timeCounter;     // The amount of time that has passed
+        double fps;             // The speed of the animation
+        double timePerFrame;
+
+        const int walkFrameCount = 12;
+        const int rectOffset = 0;
+        const int rectHeight = 125;     
+        const int rectWidth = 125;
 
         List<tileClass> rects; //a list of collectibles
 
@@ -89,6 +114,11 @@ namespace StealTheMonaLisa
 
             rects = new List<tileClass>();
 
+            playerLOC = new Vector2();
+
+            fps = 10.0;
+            timePerFrame = 1.0 / fps;
+
             base.Initialize();
 
         }
@@ -102,15 +132,16 @@ namespace StealTheMonaLisa
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             // Testing Player Load
-            p1 = new Player1(100, 330, 100, 100, 3, 2, 1);
+            p1 = new Player1(100, GraphicsDevice.Viewport.Height-175, 125, 125, 3, 2, 1);
             gstats = new GameStats(0, 0, 0, 0.0, 0.0);
+            spriteSheet = Content.Load<Texture2D>("spriteSheetB.png");
             testImage = Content.Load<Texture2D>("Pizza.png");
-            p1.CurrentTexture = testImage;
+            //p1.CurrentTexture = testImage;           
 
             tileA = Content.Load<Texture2D>("tileA.png");
             tileB = Content.Load<Texture2D>("tileB.png");
             tileC = Content.Load<Texture2D>("tileC.png");
-
+           
             textTile();
 
             // TODO: use this.Content to load your game content here
@@ -135,6 +166,8 @@ namespace StealTheMonaLisa
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            UpdateAnimation(gameTime);
+
             // Getting keyboard state
             previousKbState = kbstate;
             kbstate = Keyboard.GetState();
@@ -154,6 +187,86 @@ namespace StealTheMonaLisa
 
                     // Moves the player
                     MovePlayer();
+
+                    switch (currentState)
+                    {
+
+                        case WalkState.FaceRight: //checks direction starting from right
+
+                            if (kbstate.IsKeyDown(Keys.D))
+                            {
+
+                                currentState = WalkState.WalkRight; //walks right
+
+                            }
+
+                            else if (kbstate.IsKeyDown(Keys.A))
+                            {
+
+                                currentState = WalkState.WalkLeft; //walks left
+
+                            }
+
+                            break;
+
+                        case WalkState.FaceLeft: //checks direction starting from left
+
+                            if (kbstate.IsKeyDown(Keys.A))
+                            {
+
+                                currentState = WalkState.WalkLeft; //walks left
+
+                            }
+
+                            else if (kbstate.IsKeyDown(Keys.D))
+                            {
+
+                                currentState = WalkState.WalkRight; //walks right
+
+                            }
+
+                            break;
+
+                        case WalkState.WalkRight:
+
+                            if (kbstate.IsKeyDown(Keys.D)) //continues moving mario across screen to right
+                            {
+
+                                currentState = WalkState.WalkRight;
+
+                            }
+
+                            else
+                            {
+
+                                currentState = WalkState.FaceRight; //postions mario to face right
+
+                            }
+
+                            break;
+
+                        case WalkState.WalkLeft:
+
+
+                            if (kbstate.IsKeyDown(Keys.A)) //comntinues moving mario across screen to left
+                            {
+
+                                currentState = WalkState.WalkLeft;
+
+                            }
+
+                            else
+                            {
+
+                                currentState = WalkState.FaceLeft; //poistions mario to face left
+
+                            }
+
+                            break;
+
+
+
+                    }
 
                     // Handles jumping and gravity for the player
                     PlayerGravity();
@@ -240,7 +353,7 @@ namespace StealTheMonaLisa
             catch (Exception e)
             {
 
-                Console.WriteLine("File is icompatible; Loop may be absolute shite");
+                Console.WriteLine("File is icompatible; Loop may not work");
                 Console.WriteLine(e.Message);
 
             }
@@ -274,7 +387,37 @@ namespace StealTheMonaLisa
 
                     }
 
-                    spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
+                    //spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
+
+                    switch (currentState) //flips sprite accoring to state
+
+                    {
+
+                        case WalkState.FaceLeft:
+
+                            DrawCharacterStanding(SpriteEffects.FlipHorizontally);
+
+                            break;
+
+                        case WalkState.FaceRight:
+
+                            DrawCharacterStanding(SpriteEffects.None);
+
+                            break;
+
+                        case WalkState.WalkRight:
+
+                            DrawCharacterWalking(SpriteEffects.None);
+
+                            break;
+
+                        case WalkState.WalkLeft:
+
+                            DrawCharacterWalking(SpriteEffects.FlipHorizontally);
+
+                            break;
+
+                    }
 
                     break;
 
@@ -288,8 +431,53 @@ namespace StealTheMonaLisa
             base.Draw(gameTime);
         }
 
+
+
+
         // Handles basic movement (Left/Right, Sprinting, Jumping)
         // Also handles momentum and endurance for sprinting
+
+        private void UpdateAnimation(GameTime gameTime)
+        {
+
+            timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if(timeCounter >= timePerFrame)
+            {
+
+                frame += 1;
+
+                if(isJumping == true)
+                {
+
+                    frame = 1;
+
+                }
+
+                if(frame > walkFrameCount)
+
+                frame = 1;
+
+                timeCounter -= timePerFrame;
+
+            }
+
+        }
+
+        private void DrawCharacterStanding(SpriteEffects flipSprite)
+        {
+
+            spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White, 0, Vector2.Zero, 1.0f, flipSprite, 0);
+
+        }
+
+        private void DrawCharacterWalking(SpriteEffects flipSprite)
+        {
+
+            spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(frame * rectWidth, rectOffset, rectWidth, rectHeight), Color.White, 0, Vector2.Zero, 1.0f, flipSprite, 0);
+
+        }
+        
 
         public void MovePlayer()
         {
@@ -407,6 +595,9 @@ namespace StealTheMonaLisa
                 }
                 p1.X -= Runspeed + Sprint;
             }
+
+            playerLOC.X = p1.X;
+
         }
 
         public void PlayerGravity()
@@ -431,6 +622,9 @@ namespace StealTheMonaLisa
                     gravity = 0;
                 }
             }
+
+            playerLOC.Y = p1.Y;
+
         }
 
         }
