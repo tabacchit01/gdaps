@@ -23,25 +23,13 @@ namespace StealTheMonaLisa
         bool onGround;
         bool isJumping;
 
-        public Rectangle box;
-        public Vector2 prevPos;
-        public Rectangle checkBox;
+        Rectangle box;
+        Vector2 prevPos;
+        Rectangle checkBox;
+
+        List<Rectangle> tileBox;
 
         Texture2D currentTexture;
-
-        public Character(int x, int y, int wdth, int hght, int hlth, int strngth, int spd)
-        {
-            box = new Rectangle(x, y, wdth, hght);
-            checkBox = new Rectangle(x - 50, y - 50, wdth+100, hght+100);
-            health = hlth;
-            Strength = strngth;
-            speed = spd;
-
-            sprint = 0;
-            stamina = 200;
-            runspeed = 0;
-            gravity = 0;
-        }
 
         #region Properties
         public int X
@@ -121,6 +109,22 @@ namespace StealTheMonaLisa
         }
         #endregion
 
+        public Character(int x, int y, int wdth, int hght, int hlth, int strngth, int spd)
+        {
+            box = new Rectangle(x, y, wdth, hght);
+            checkBox = new Rectangle(x - 50, y - 50, wdth + 100, hght + 100);
+            health = hlth;
+            Strength = strngth;
+            speed = spd;
+
+            sprint = 0;
+            stamina = 200;
+            runspeed = 0;
+            gravity = 0;
+
+            tileBox = new List<Rectangle>();
+        }
+
         /// <summary>
         /// Used to move a character left.
         /// </summary>
@@ -174,9 +178,35 @@ namespace StealTheMonaLisa
             }
         }
 
-        public void Detection()
+        public void Detection(List<Rectangle> list)
         {
+            foreach(Rectangle r in list)
+            {
+                if(checkBox.Intersects(r))
+                {
+                    tileBox.Add(r);
+                }
+                else
+                {
+                    if(tileBox.Contains(r))
+                    {
+                        tileBox.Remove(r);
+                    }
+                }
+            }
+        }
 
+        public bool IsColliding(List<Rectangle> list)
+        {
+            foreach(Rectangle r in list)
+            {
+                if(box.Intersects(r))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
     }

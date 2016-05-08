@@ -53,7 +53,9 @@ namespace StealTheMonaLisa
         const int rectHeight = 125;
         const int rectWidth = 125;
 
+        Rectangle rect;
         List<tileClass> rects; //a list of collectibles
+        List<Rectangle> tileRect; //list of all tile rectangles
 
         // Enums
         GameState CurrentState = GameState.StartMenu;
@@ -138,6 +140,14 @@ namespace StealTheMonaLisa
             tileC = Content.Load<Texture2D>("tileC.png");
 
             textTile();
+
+            tileRect = new List<Rectangle>();
+
+            foreach(tileClass t in rects)
+            {
+                rect = t.HitBox;
+                tileRect.Add(rect);
+            }
         }
 
         /// <summary>
@@ -317,7 +327,6 @@ namespace StealTheMonaLisa
                             t1 = new tileClass(XX, YY, 50, 50, tileA);
 
                             rects.Add(t1);
-
                         }
                         if (line[i] == 'B')
                         {
@@ -330,7 +339,7 @@ namespace StealTheMonaLisa
                         if (line[i] == 'C')
                         {
 
-                            //CREATES BLANK
+                            //Creates Enemies at a later time
 
                         }
 
@@ -472,7 +481,9 @@ namespace StealTheMonaLisa
         {
             // Sets Previous Position for collision purposes
             p1.PrevPos = new Vector2(p1.X, p1.Y);
+            p1.Detection(tileRect);
 
+            #region Sprinting
             // Handles spriting (if shift is held, speed is increased)
             if (kbstate.IsKeyDown(Keys.LeftShift) || kbstate.IsKeyDown(Keys.RightShift))
             {
@@ -512,6 +523,7 @@ namespace StealTheMonaLisa
                     }
                 }
             }
+            #endregion
 
             // Handles moving left and right as well as jumping
 
@@ -531,6 +543,7 @@ namespace StealTheMonaLisa
 
             // Friction
 
+            #region Friction
             if (kbstate.IsKeyUp(Keys.D) && kbstate.IsKeyUp(Keys.A) && p1.RunRight == true)
             {
                 p1.Runspeed--;
@@ -551,6 +564,7 @@ namespace StealTheMonaLisa
                 }
                 p1.X -= p1.Runspeed + Sprint;
             }
+            #endregion
 
             playerLOC.X = p1.X;
 
@@ -568,6 +582,5 @@ namespace StealTheMonaLisa
             playerLOC.Y = p1.Y;
 
         }
-
     } 
 }
