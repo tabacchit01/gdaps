@@ -23,11 +23,13 @@ namespace StealTheMonaLisa
         bool onGround;
         bool isJumping;
 
-        public Rectangle box;
         Vector2 prevPos;
+        Rectangle box;
         Rectangle checkBox;
+        Rectangle prevBox;
 
         List<Rectangle> tileBox;
+        List<Rectangle> contact;
 
         Texture2D currentTexture;
 
@@ -90,10 +92,16 @@ namespace StealTheMonaLisa
             set { stamina = value; }
         }
 
-        public Vector2 PrevPos
+        public Rectangle PrevBox
         {
-            get { return prevPos; }
-            set { prevPos = value; }
+            get { return prevBox; }
+            set { prevBox = value; }
+        }
+
+        public Rectangle Box
+        {
+            get { return box; }
+            set { box = value; }
         }
 
         public bool OnGround
@@ -123,6 +131,7 @@ namespace StealTheMonaLisa
             gravity = 0;
 
             tileBox = new List<Rectangle>();
+            contact = new List<Rectangle>();
         }
 
         /// <summary>
@@ -164,31 +173,26 @@ namespace StealTheMonaLisa
         /// <summary>
         /// Used to handle jumping (Set IsJumping to true before calling this method).
         /// </summary>
-        public void Jump()
+        public void Jump(int s)
         {
             if (isJumping == true)
             {
-                this.Y -= 13 - (gravity / 2);
+                box.Y -= s - (gravity / 2);
                 gravity++;
-                if (this.Y >= 300)
-                {
-                    isJumping = false;
-                    gravity = 0;
-                }
             }
         }
 
         public void Detection(List<Rectangle> list)
         {
-            foreach(Rectangle r in list)
+            foreach (Rectangle r in list)
             {
-                if(checkBox.Intersects(r))
+                if (checkBox.Intersects(r))
                 {
                     tileBox.Add(r);
                 }
                 else
                 {
-                    if(tileBox.Contains(r))
+                    if (tileBox.Contains(r))
                     {
                         tileBox.Remove(r);
                     }
@@ -196,17 +200,52 @@ namespace StealTheMonaLisa
             }
         }
 
-        public bool IsColliding(List<Rectangle> list)
+        public void CollideX(List<Rectangle> list)
         {
             foreach(Rectangle r in list)
             {
-                if(box.Intersects(r))
+                if(Box.Intersects(r) && (r.Y > box.Y && r.Y < box.Y+Height))
                 {
-                    return true;
+                    // Right
+                    if(prevBox.X > r.X)
+                    {
+                        box.X = r.X + r.Width + 1;
+                        runspeed = 0;
+                    }
+
+                    // Left
+                    if(prevBox.X < r.X)
+                    {
+                        box.X = r.X - Width - 1;
+                        runspeed = 0;
+                    }
                 }
             }
+        }
 
-            return false;
+        public void CollideY(List<Rectangle> list)
+        {
+            foreach (Rectangle r in list)
+            {
+                // if the play has vertically collided
+                if (box.Intersects(r) && (r.X > box.X && r.X < box.X + Width))
+                {
+                    // Up
+                    if (prevBox.Y < r.Y)
+                    {
+                        box.Y = r.Y - Height - 1;
+                        isJumping = false;
+                        gravity = 0;
+                    }
+
+                    // Down
+                    if (prevBox.Y > r.Y)
+                    {
+                        box.Y = r.Y + Height + 1;
+                        Jump(0);
+                    }
+                }
+            }
         }
 
     }
