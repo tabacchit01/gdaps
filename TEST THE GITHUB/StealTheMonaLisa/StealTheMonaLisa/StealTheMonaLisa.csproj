@@ -40,10 +40,18 @@
   <ItemGroup>
     <Compile Include="buildingTile.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="Documents.cs" />
+    <Compile Include="Dog.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="floorTile.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="GameMenus.cs" />
     <Compile Include="GameStats.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="knife.cs" />
+    <Compile Include="Labtop.cs" />
+    <Compile Include="Mission.cs" />
+    <Compile Include="MonaLisa.cs" />
     <Compile Include="Player1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,10 +71,40 @@
     <Content Include="Content\building.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\documents.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Dog.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\ExitButton.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\InButton.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Item1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Knife.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\levelText.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\MenuBackground.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MenuBlock.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\OutButton.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\PIzza.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\RedPin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\roadtile.png">
@@ -84,6 +122,9 @@
     <Content Include="Content\spriteSheetPNG.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\steel.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\tileA.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -93,10 +134,27 @@
     <Content Include="Content\tileC.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\WorldMap.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\SimplifiedArabicFixed_10.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\SimplifiedArabicFixed_14.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\SimplifiedArabicFixed_18.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\SimplifiedArabicFixed_22.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <!-- Specify the search path explicitly so the ResolveAssemblyReferences task picks the right ones -->
   <Target Name="BeforeResolveReferences">

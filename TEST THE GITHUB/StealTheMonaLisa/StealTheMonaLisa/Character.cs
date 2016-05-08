@@ -23,7 +23,7 @@ namespace StealTheMonaLisa
         bool onGround;
         bool isJumping;
 
-        Rectangle box;
+        public Rectangle box;
         Vector2 prevPos;
         Rectangle checkBox;
 
