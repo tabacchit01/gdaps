@@ -29,12 +29,10 @@ namespace StealTheMonaLisa
 
         enum WalkState
         {
-
             FaceLeft,
             WalkLeft,
             FaceRight,
             WalkRight
-
         }
 
 
@@ -52,7 +50,7 @@ namespace StealTheMonaLisa
 
         const int walkFrameCount = 12;
         const int rectOffset = 0;
-        const int rectHeight = 125;     
+        const int rectHeight = 125;
         const int rectWidth = 125;
 
         List<tileClass> rects; //a list of collectibles
@@ -62,15 +60,12 @@ namespace StealTheMonaLisa
         CharacterState CharState = CharacterState.FaceRight;
 
         // basic physics values (Remove tempGround when we have solid ground blocks)
-        int tempGround = 330;
         bool isJumping = false;
         bool isOnGround = true;
         int gravity = 0;
         int Runspeed = 0;
         int Sprint = 0;
         int endurance = 200;
-        bool RunLeft = false;
-        bool RunRight = false;
 
         // Handles the various states the game will be in
         enum GameState
@@ -132,7 +127,7 @@ namespace StealTheMonaLisa
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             // Testing Player Load
-            p1 = new Player1(100, GraphicsDevice.Viewport.Height-175, 125, 125, 3, 2, 1);
+            p1 = new Player1(100, GraphicsDevice.Viewport.Height - 175, 125, 125, 3, 2, 1);
             gstats = new GameStats(0, 0, 0, 0.0, 0.0);
             spriteSheet = Content.Load<Texture2D>("spriteSheetB.png");
             testImage = Content.Load<Texture2D>("Pizza.png");
@@ -141,10 +136,8 @@ namespace StealTheMonaLisa
             tileA = Content.Load<Texture2D>("tileA.png");
             tileB = Content.Load<Texture2D>("tileB.png");
             tileC = Content.Load<Texture2D>("tileC.png");
-           
-            textTile();
 
-            // TODO: use this.Content to load your game content here
+            textTile();
         }
 
         /// <summary>
@@ -177,7 +170,7 @@ namespace StealTheMonaLisa
                 case GameState.StartMenu:
 
                     // Goes to the main game after pressing enter
-                    if(kbstate.IsKeyDown(Keys.Enter))
+                    if (kbstate.IsKeyDown(Keys.Enter))
                     {
                         CurrentState = GameState.Game;
                     }
@@ -188,9 +181,9 @@ namespace StealTheMonaLisa
                     // Moves the player
                     MovePlayer();
 
+                    #region WalkStates
                     switch (currentState)
                     {
-
                         case WalkState.FaceRight: //checks direction starting from right
 
                             if (kbstate.IsKeyDown(Keys.D))
@@ -267,6 +260,7 @@ namespace StealTheMonaLisa
 
 
                     }
+                    #endregion
 
                     // Handles jumping and gravity for the player
                     PlayerGravity();
@@ -282,6 +276,7 @@ namespace StealTheMonaLisa
             base.Update(gameTime);
 
         }
+
         private void textTile()
         {
 
@@ -371,7 +366,7 @@ namespace StealTheMonaLisa
             // Testing player draw
             spriteBatch.Begin();
 
-            switch(CurrentState)
+            switch (CurrentState)
             {
                 case GameState.StartMenu:
 
@@ -431,32 +426,26 @@ namespace StealTheMonaLisa
             base.Draw(gameTime);
         }
 
-
-
-
-        // Handles basic movement (Left/Right, Sprinting, Jumping)
-        // Also handles momentum and endurance for sprinting
-
         private void UpdateAnimation(GameTime gameTime)
         {
 
             timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
 
-            if(timeCounter >= timePerFrame)
+            if (timeCounter >= timePerFrame)
             {
 
                 frame += 1;
 
-                if(isJumping == true)
+                if (isJumping == true)
                 {
 
                     frame = 1;
 
                 }
 
-                if(frame > walkFrameCount)
+                if (frame > walkFrameCount)
 
-                frame = 1;
+                    frame = 1;
 
                 timeCounter -= timePerFrame;
 
@@ -477,46 +466,49 @@ namespace StealTheMonaLisa
             spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(frame * rectWidth, rectOffset, rectWidth, rectHeight), Color.White, 0, Vector2.Zero, 1.0f, flipSprite, 0);
 
         }
-        
+
 
         public void MovePlayer()
         {
+            // Sets Previous Position for collision purposes
+            p1.PrevPos = new Vector2(p1.X, p1.Y);
+
             // Handles spriting (if shift is held, speed is increased)
             if (kbstate.IsKeyDown(Keys.LeftShift) || kbstate.IsKeyDown(Keys.RightShift))
             {
-                if (endurance > 0)
+                if (p1.Stamina > 0)
                 {
-                    Sprint++;
-                    if (Sprint >= 6)
+                    p1.Sprint++;
+                    if (p1.Sprint >= 5)
                     {
-                        Sprint = 6;
+                        p1.Sprint = 5;
                     }
-                    endurance--;
+                    p1.Stamina--;
                 }
                 else
                 {
-                    Sprint--;
-                    if (Sprint <= 0)
+                    p1.Sprint--;
+                    if (p1.Sprint <= 0)
                     {
-                        Sprint = 0;
-                        endurance++;
-                        if (endurance >= 200)
+                        p1.Sprint = 0;
+                        p1.Stamina++;
+                        if (p1.Stamina >= 200)
                         {
-                            endurance = 200;
+                            p1.Stamina = 200;
                         }
                     }
                 }
             }
             else
             {
-                Sprint--;
-                if (Sprint <= 0)
+                p1.Sprint--;
+                if (p1.Sprint <= 0)
                 {
-                    Sprint = 0;
-                    endurance++;
-                    if (endurance >= 200)
+                    p1.Sprint = 0;
+                    p1.Stamina++;
+                    if (p1.Stamina >= 200)
                     {
-                        endurance = 200;
+                        p1.Stamina = 200;
                     }
                 }
             }
@@ -526,74 +518,38 @@ namespace StealTheMonaLisa
             if (kbstate.IsKeyDown(Keys.W))
             {
                 isJumping = true;
+                p1.IsJumping = true;
             }
             if (kbstate.IsKeyDown(Keys.A))
             {
-                RunLeft = true;
-                RunRight = false;
-                Runspeed++;
-                if (Runspeed >= 7)
-                {
-                    Runspeed = 7;
-                }
-
-                /*if (p1.X <= (GraphicsDevice.Viewport.Width / 2))
-                {
-                    foreach (tileClass col in rects) //scrolls collectibles
-                    {
-
-                        col.TileX += 7;
-
-                    }
-                }*/
-
-                p1.X -= Runspeed + Sprint;
+                p1.Left(9);
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
-                RunRight = true;
-                RunLeft = false;
-                Runspeed++;
-                if (Runspeed >= 7)
-                {
-                    Runspeed = 7;
-                }
-
-                /*if (p1.X >= (GraphicsDevice.Viewport.Width / 2))
-                {
-                    foreach (tileClass col in rects) //scrolls collectibles
-                    {
-
-                        col.TileX -= 7;
-
-                    }
-                }*/
-
-                p1.X += Runspeed + Sprint;
+                p1.Right(9);
             }
 
-            // Checks to see if the player has stopped moving
-            // if so they are slowed down over time
+            // Friction
 
-            if (kbstate.IsKeyUp(Keys.D) && kbstate.IsKeyUp(Keys.A) && RunRight == true)
+            if (kbstate.IsKeyUp(Keys.D) && kbstate.IsKeyUp(Keys.A) && p1.RunRight == true)
             {
-                Runspeed--;
-                if (Runspeed <= 0)
+                p1.Runspeed--;
+                if (p1.Runspeed <= 0)
                 {
-                    Runspeed = 0;
-                    RunRight = false;
+                    p1.Runspeed = 0;
+                    p1.RunRight = false;
                 }
-                p1.X += Runspeed + Sprint;
+                p1.X += p1.Runspeed + Sprint;
             }
-            if (kbstate.IsKeyUp(Keys.A) && kbstate.IsKeyUp(Keys.D) && RunLeft == true)
+            if (kbstate.IsKeyUp(Keys.A) && kbstate.IsKeyUp(Keys.D) && p1.RunLeft == true)
             {
-                Runspeed--;
-                if (Runspeed <= 0)
+                p1.Runspeed--;
+                if (p1.Runspeed <= 0)
                 {
-                    Runspeed = 0;
-                    RunLeft = false;
+                    p1.Runspeed = 0;
+                    p1.RunLeft = false;
                 }
-                p1.X -= Runspeed + Sprint;
+                p1.X -= p1.Runspeed + Sprint;
             }
 
             playerLOC.X = p1.X;
@@ -602,30 +558,16 @@ namespace StealTheMonaLisa
 
         public void PlayerGravity()
         {
-            if (isJumping == true)
+            p1.Jump();
+
+            if (p1.IsJumping == false)
             {
-                p1.Y -= 13 - (gravity / 2);
-                gravity++;
-                if (p1.Y >= tempGround)
-                {
-                    isJumping = false;
-                    gravity = 0;
-                }
-            }
-            if (isOnGround == false)
-            {
-                p1.Y -= 0 - (gravity / 2);
-                gravity++;
-                if (p1.Y >= tempGround)
-                {
-                    isOnGround = true;
-                    gravity = 0;
-                }
+                isJumping = false;
             }
 
             playerLOC.Y = p1.Y;
 
         }
 
-        }
-    }
+    } 
+}
