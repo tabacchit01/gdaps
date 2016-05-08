@@ -480,8 +480,7 @@ namespace StealTheMonaLisa
         public void MovePlayer()
         {
             // Sets Previous Position for collision purposes
-            p1.PrevPos = new Vector2(p1.X, p1.Y);
-            p1.Detection(tileRect);
+            p1.PrevBox = p1.Box;
 
             #region Sprinting
             // Handles spriting (if shift is held, speed is increased)
@@ -535,10 +534,12 @@ namespace StealTheMonaLisa
             if (kbstate.IsKeyDown(Keys.A))
             {
                 p1.Left(9);
+                p1.CollideX(tileRect);
             }
             if (kbstate.IsKeyDown(Keys.D))
             {
                 p1.Right(9);
+                p1.CollideX(tileRect);
             }
 
             // Friction
@@ -572,8 +573,13 @@ namespace StealTheMonaLisa
 
         public void PlayerGravity()
         {
-            p1.Jump();
+            p1.Jump(13);
+            p1.CollideY(tileRect);
 
+            if(p1.IsJumping == true)
+            {
+                isJumping = true;
+            }
             if (p1.IsJumping == false)
             {
                 isJumping = false;
