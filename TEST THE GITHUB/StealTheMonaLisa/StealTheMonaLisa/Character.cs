@@ -22,10 +22,9 @@ namespace StealTheMonaLisa
         bool MoveRight;
         bool onGround;
         bool isJumping;
+        bool falling;
 
-        Vector2 prevPos;
         Rectangle box;
-        Rectangle checkBox;
         Rectangle prevBox;
 
         List<Rectangle> tileBox;
@@ -37,24 +36,24 @@ namespace StealTheMonaLisa
         public int X
         {
             get { return box.X; }
-            set { box = new Rectangle(value, box.Y, box.Width, box.Height); }
+            set { box = new Rectangle(value, box.Y, box.Width, box.Height);}
         }
         public int Y
         {
             get { return box.Y; }
-            set { box = new Rectangle(box.X, value, box.Width, box.Height); }
+            set { box = new Rectangle(box.X, value, box.Width, box.Height);}
         }
 
         public int Width
         {
             get { return box.Width; }
-            set { box = new Rectangle(box.X, box.Y, value, box.Height); }
+            set { box = new Rectangle(box.X, box.Y, value, box.Height);}
         }
 
         public int Height
         {
             get { return box.Height; }
-            set { box = new Rectangle(box.X, box.Y, box.Width, value); }
+            set { box = new Rectangle(box.X, box.Y, box.Width, value);}
         }
         public Texture2D CurrentTexture
         {
@@ -120,7 +119,6 @@ namespace StealTheMonaLisa
         public Character(int x, int y, int wdth, int hght, int hlth, int strngth, int spd)
         {
             box = new Rectangle(x, y, wdth, hght);
-            checkBox = new Rectangle(x - 50, y - 50, wdth + 100, hght + 100);
             health = hlth;
             Strength = strngth;
             speed = spd;
@@ -129,6 +127,8 @@ namespace StealTheMonaLisa
             stamina = 200;
             runspeed = 0;
             gravity = 0;
+            onGround = false;
+            falling = false;
 
             tileBox = new List<Rectangle>();
             contact = new List<Rectangle>();
@@ -177,26 +177,18 @@ namespace StealTheMonaLisa
         {
             if (isJumping == true)
             {
+                onGround = false;
                 box.Y -= s - (gravity / 2);
                 gravity++;
             }
         }
 
-        public void Detection(List<Rectangle> list)
+        public void fall()
         {
-            foreach (Rectangle r in list)
+            if(falling == true && isJumping == false)
             {
-                if (checkBox.Intersects(r))
-                {
-                    tileBox.Add(r);
-                }
-                else
-                {
-                    if (tileBox.Contains(r))
-                    {
-                        tileBox.Remove(r);
-                    }
-                }
+                box.Y += (gravity / 2);
+                gravity++;
             }
         }
 
@@ -220,6 +212,10 @@ namespace StealTheMonaLisa
                         runspeed = 0;
                     }
                 }
+                else if(!box.Intersects(r) && (r.X > box.X && r.X < box.X + Width) && (isJumping == false))
+                {
+                    falling = true;
+                }
             }
         }
 
@@ -235,6 +231,8 @@ namespace StealTheMonaLisa
                     {
                         box.Y = r.Y - Height - 1;
                         isJumping = false;
+                        onGround = true;
+                        falling = false;
                         gravity = 0;
                     }
 

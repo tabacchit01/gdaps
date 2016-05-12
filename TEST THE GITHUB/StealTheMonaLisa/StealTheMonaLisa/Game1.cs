@@ -1089,10 +1089,7 @@ namespace StealTheMonaLisa
 
         public void PlayerGravity()
         {
-            p1.Jump(13);
-            p1.CollideY(tileRect);
-
-            if(p1.IsJumping == true)
+            if (p1.IsJumping == true)
             {
                 isJumping = true;
             }
@@ -1100,6 +1097,10 @@ namespace StealTheMonaLisa
             {
                 isJumping = false;
             }
+
+            p1.fall();
+            p1.Jump(13);
+            p1.CollideY(tileRect);
 
             playerLOC.Y = p1.Y;
 
