@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="buildingTile.cs" />
+    <Compile Include="Camera.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Documents.cs" />
     <Compile Include="Dog.cs" />

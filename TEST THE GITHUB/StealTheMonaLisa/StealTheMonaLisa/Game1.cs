@@ -66,6 +66,14 @@ namespace StealTheMonaLisa
 
         StreamReader level;
 
+        //Camera
+        Camera camera = new Camera();
+
+        //Enemy AI
+        Character enemy1;
+        Character enemy2;
+        int spawnCount;
+
         private WalkState currentState;
 
         enum WalkState
@@ -96,6 +104,7 @@ namespace StealTheMonaLisa
 
         Rectangle rect;
         List<tileClass> rects; //a list of collectibles
+        List<tileClass> tempRects;
         List<Rectangle> tileRect; //list of all tile rectangles
 
         // Enums
@@ -104,11 +113,7 @@ namespace StealTheMonaLisa
 
         // basic physics values (Remove tempGround when we have solid ground blocks)
         bool isJumping = false;
-        bool isOnGround = true;
-        int gravity = 0;
-        int Runspeed = 0;
         int Sprint = 0;
-        int endurance = 200;
 
         // Handles the various states the game will be in
         enum GameState
@@ -155,6 +160,8 @@ namespace StealTheMonaLisa
 
             playerLOC = new Vector2();
 
+            spawnCount = 1;
+
             fps = 10.0;
             timePerFrame = 1.0 / fps;
 
@@ -171,7 +178,8 @@ namespace StealTheMonaLisa
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             // Testing Player Load
-            p1 = new Player1(100, GraphicsDevice.Viewport.Height - 175, 125, 125, 3, 2, 1);
+            p1 = new Player1(GraphicsDevice.Viewport.Width/2-125, GraphicsDevice.Viewport.Height - 175, 125, 125, 3, 2, 1);
+
             gstats = new GameStats(0, 0, 0, 0.0, 0.0);
             spriteSheet = Content.Load<Texture2D>("spriteSheetB.png");
             testImage = Content.Load<Texture2D>("Pizza.png");
@@ -227,7 +235,12 @@ namespace StealTheMonaLisa
 
             textTile();
 
+            //enemy textures
+            enemy1.CurrentTexture = testImage;
+            enemy2.CurrentTexture = testImage;
+
             tileRect = new List<Rectangle>();
+            tempRects = new List<tileClass>();
 
             foreach(tileClass t in rects)
             {
@@ -404,11 +417,11 @@ namespace StealTheMonaLisa
                         break;
                     }
                 case GameState.Game:
-                { 
-                    // Moves the player
-                    MovePlayer();
+                    { 
+                        // Moves the player
+                        MovePlayer();
 
-                    #region WalkStates
+                        #region WalkStates
                     switch (currentState)
                     {
                         case WalkState.FaceRight: //checks direction starting from right
@@ -487,24 +500,34 @@ namespace StealTheMonaLisa
 
 
                     }
-                    #endregion
+                        #endregion
 
-                    // Handles jumping and gravity for the player
-                    PlayerGravity();
+                        // Hanldes enemy AI
+                        EnemyAI(enemy1);
+                        EnemyAI(enemy2);
 
-                    bool exit = false;
+                        // Handles gravity
+                        Gravity(p1);
+                        Gravity(enemy1);
+                        Gravity(enemy2);
 
-                    Keys escape = Keys.Back;
+                        // Handles the camera
+                        camera.Update(p1.X,p1.Y);
+                           
 
-                    exit = SingleKeyPress(escape);
+                        bool exit = false;
 
-                    if (exit)
-                    {
+                        Keys escape = Keys.Back;
+
+                        exit = SingleKeyPress(escape);
+
+                        if (exit)
+                        {
                         CurrentState = GameState.PauseMenu;
+                        }
+                        previouskbstate = kbstate;
+                        break;
                     }
-                    previouskbstate = kbstate;
-                    break;
-                }
 
                 case GameState.PauseMenu:
                     {
@@ -670,16 +693,21 @@ namespace StealTheMonaLisa
                         }
                         if (line[i] == 'B')
                         {
+                            if(spawnCount == 1)
+                            {
+                                enemy1 = new Character(XX, YY, 100, 100, 1, 1, 1);
+                            }
+                            else if(spawnCount == 2)
+                            {
+                                enemy2 = new Character(XX, YY, 100, 100, 1, 1, 1);
+                            }
 
-                            t1 = new tileClass(XX, YY, 50, 50, tileB);
-
-                            rects.Add(t1);
-
+                            spawnCount++;
                         }
                         if (line[i] == 'C')
                         {
 
-                            //Creates Enemies at a later time
+                            
 
                         }
 
@@ -712,20 +740,23 @@ namespace StealTheMonaLisa
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // Testing player draw
-            spriteBatch.Begin();
-
 
             switch (CurrentState)
             {
                 case GameState.StartMenu:
                     {
+                        spriteBatch.Begin();
 
                         GMenus.TitleMenu(spriteBatch, text, priceText);
+
+                        spriteBatch.End();
+
                         break;
                     }
                 case GameState.WorldMapMenu:
                     {
+                        spriteBatch.Begin();
+
                         if (openClose)
                         {
                             if (GMenus.Box4.X != 0)
@@ -845,22 +876,35 @@ namespace StealTheMonaLisa
 
                         }
 
+                        spriteBatch.End();
+
                         break;
                     }
                 case GameState.ExitWorldMapMenu:
                     {
+                        spriteBatch.Begin();
+
                         GMenus.WorldMap(spriteBatch, highLight, openClose);
                         GMenus.ConfirmMenu(spriteBatch);
+
+                        spriteBatch.End();
+
                         break;
                     }
                 case GameState.MissionMenu:
                     {
+                        spriteBatch.Begin();
+
                         GMenus.WorldMap(spriteBatch, highLight, openClose);
                         GMenus.ContractMenu(spriteBatch, mis[misNum], text, desText, priceText);
+
+                        spriteBatch.End();
+
                         break;
                     }
                 case GameState.Game:
                     {
+                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
 
                         // Draws for the main game
                         foreach (tileClass col in rects) //draws each collectible that is present in the array
@@ -902,11 +946,18 @@ namespace StealTheMonaLisa
 
                         }
 
+                        enemy1.Draw(spriteBatch);
+                        enemy2.Draw(spriteBatch);
+
+                        spriteBatch.End();
+
                         break;
                     }
 
                 case GameState.PauseMenu:
                     {
+                        spriteBatch.Begin();
+
                         spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White);
                         GraphicsDevice.Clear(Color.Black);
                         foreach (tileClass col in rects) //draws each collectible that is present in the array
@@ -917,10 +968,15 @@ namespace StealTheMonaLisa
                         }
                         spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White);
                         GMenus.GamePauseMenu(spriteBatch);
+
+                        spriteBatch.End();
+
                         break;
                     }
                 case GameState.ExitGameConfirmMenu:
                     {
+                        spriteBatch.Begin();
+
                         spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White);
                         GraphicsDevice.Clear(Color.Black);
                         foreach (tileClass col in rects) //draws each collectible that is present in the array
@@ -931,22 +987,31 @@ namespace StealTheMonaLisa
                         }
                         spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White);
                         GMenus.ConfirmMenu(spriteBatch);
+
+                        spriteBatch.End();
+
                         break;
                     }
                 case GameState.MissionSuccessMenu:
                     {
+                        spriteBatch.Begin();
+
                         GMenus.MissionSuccess(spriteBatch);
+
+                        spriteBatch.End();
                         break;
                     }
                 case GameState.MissionFailure:
                     {
+                        spriteBatch.Begin();
+
                         GMenus.MissionFail(spriteBatch);
+
+                        spriteBatch.End();
                         break;
                     }
 
             }        
-
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }
@@ -991,7 +1056,6 @@ namespace StealTheMonaLisa
             spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(frame * rectWidth, rectOffset, rectWidth, rectHeight), Color.White, 0, Vector2.Zero, 1.0f, flipSprite, 0);
 
         }
-
 
         public void MovePlayer()
         {
@@ -1087,8 +1151,9 @@ namespace StealTheMonaLisa
 
         }
 
-        public void PlayerGravity()
+        public void Gravity(Character c)
         {
+            // Only for player
             if (p1.IsJumping == true)
             {
                 isJumping = true;
@@ -1098,13 +1163,15 @@ namespace StealTheMonaLisa
                 isJumping = false;
             }
 
-            p1.fall();
-            p1.Jump(13);
-            p1.CollideY(tileRect);
+            c.fall();
+            c.Jump(13);
+            c.CollideY(tileRect);
 
+            // Only for player
             playerLOC.Y = p1.Y;
 
         }
+
         public bool SingleKeyPress(Keys letter)
         {
             // Checks if the key is being pressed
@@ -1119,6 +1186,7 @@ namespace StealTheMonaLisa
             return false;
 
         }
+
         public bool MousePosistion(int x, int y, int boxHeight, int boxWitdh)
         {
             if (mstate.Position.Y > y && mstate.Position.Y < (y + boxHeight) && mstate.Position.X > x && mstate.Position.X < (x + boxWitdh))
@@ -1129,6 +1197,33 @@ namespace StealTheMonaLisa
             {
                 return false;
             }
+        }
+
+        public void EnemyAI(Character c)
+        {
+            c.PrevBox = c.Box;
+
+            if(c.Flip == 0)
+            {
+                c.Left(5);
+                c.CheckFall(tileRect);
+                if (c.IsCollidingX(tileRect))
+                {
+                    c.CollideX(tileRect);
+                    c.Flip = 1;
+                }
+            }
+            if (c.Flip == 1)
+            {
+                c.Right(5);
+                c.CheckFall(tileRect);
+                if (c.IsCollidingX(tileRect))
+                {
+                    c.CollideX(tileRect);
+                    c.Flip = 0;
+                }
+            }
+
         }
     } 
 }
