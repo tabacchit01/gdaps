@@ -17,6 +17,7 @@ namespace StealTheMonaLisa
         int stamina;
         int runspeed;
         int gravity;
+        int flip;
 
         bool MoveLeft;
         bool MoveRight;
@@ -33,6 +34,12 @@ namespace StealTheMonaLisa
         Texture2D currentTexture;
 
         #region Properties
+        public int Flip
+        {
+            get { return flip; }
+            set { flip = value; }
+        }
+
         public int X
         {
             get { return box.X; }
@@ -134,6 +141,7 @@ namespace StealTheMonaLisa
             gravity = 0;
             onGround = false;
             falling = false;
+            flip = 0;
 
             tileBox = new List<Rectangle>();
             contact = new List<Rectangle>();
@@ -251,5 +259,33 @@ namespace StealTheMonaLisa
             }
         }
 
+        public bool IsCollidingX(List<Rectangle> list)
+        {
+            foreach (Rectangle r in list)
+            {
+                if (Box.Intersects(r) && (r.Y > box.Y && r.Y < box.Y + Height))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void CheckFall(List<Rectangle> list)
+        {
+            foreach(Rectangle r in list)
+            {
+                if (!box.Intersects(r) && (r.X > box.X && r.X < box.X + Width) && (isJumping == false))
+                {
+                    falling = true;
+                }
+            }
+        }
+
+        public void Draw(SpriteBatch s)
+        {
+            s.Draw(currentTexture, box, Color.White);
+        }
     }
 }
