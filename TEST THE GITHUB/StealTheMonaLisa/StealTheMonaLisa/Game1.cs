@@ -54,10 +54,12 @@ namespace StealTheMonaLisa
         knife knyfe;
 
         Mission[] mis;
+        Vector2 camPos;
         bool end;
         int frames;
         int letter;
         string title;
+
 
         int misGen = 0;
         int misNum;
@@ -239,6 +241,7 @@ namespace StealTheMonaLisa
             GMenus = new GameMenus(startButton, yesButton, noButton, worldMapTexture, contractPin, contractMenu, contractItem, contractExitButton, buyButton, continueButton, abortButton, inButton, outButton, steel, faceGui, healthBlock);
 
 
+            camPos = new Vector2(0, 0);
             frames = 10;
             letter = 0;
             end = false;
@@ -537,7 +540,7 @@ namespace StealTheMonaLisa
                         Gravity(enemy2);
 
                         // Handles the camera
-                        camera.Update(p1.X,p1.Y);
+                        camPos = camera.Update(p1.X,p1.Y);
                            
 
                         bool exit = false;
@@ -562,8 +565,8 @@ namespace StealTheMonaLisa
 
                         exit = SingleKeyPress(escape);
 
-                        bool hoveringContinue = MousePosistion(GMenus.Box1.X, GMenus.Box1.Y, GMenus.Box1.Height, GMenus.Box1.Width);
-                        bool hoveringAbort = MousePosistion(GMenus.Box2.X, GMenus.Box2.Y, GMenus.Box2.Height, GMenus.Box2.Width);
+                        bool hoveringContinue = MousePosistion(GMenus.Box1.X - (int)camPos.X, GMenus.Box1.Y, GMenus.Box1.Height, GMenus.Box1.Width);
+                        bool hoveringAbort = MousePosistion(GMenus.Box2.X - (int)camPos.X, GMenus.Box2.Y, GMenus.Box2.Height, GMenus.Box2.Width);
                         if (hoveringContinue)
                         {
                             if (mstate.LeftButton == ButtonState.Pressed)
@@ -594,12 +597,13 @@ namespace StealTheMonaLisa
 
                         exit = SingleKeyPress(escape);
 
-                        bool hoveringYes = MousePosistion(GMenus.Box1.X, GMenus.Box1.Y, GMenus.Box1.Height, GMenus.Box1.Width);
-                        bool hoveringNo = MousePosistion(GMenus.Box2.X, GMenus.Box2.Y, GMenus.Box2.Height, GMenus.Box2.Width);
+                        bool hoveringYes = MousePosistion(GMenus.Box1.X - (int)camPos.X, GMenus.Box1.Y, GMenus.Box1.Height, GMenus.Box1.Width);
+                        bool hoveringNo = MousePosistion(GMenus.Box2.X - (int)camPos.X, GMenus.Box2.Y, GMenus.Box2.Height, GMenus.Box2.Width);
                         if (hoveringYes)
                         {
                             if (mstate.LeftButton == ButtonState.Pressed)
                             {
+                                camPos = new Vector2(0, 0);
                                 CurrentState = GameState.WorldMapMenu;
                             }
                         }
@@ -923,7 +927,7 @@ namespace StealTheMonaLisa
                         spriteBatch.Begin();
 
                         GMenus.WorldMap(spriteBatch, highLight, openClose);
-                        GMenus.ConfirmMenu(spriteBatch);
+                        GMenus.ConfirmMenu(spriteBatch, priceText, camPos);
 
                         spriteBatch.End();
 
@@ -951,7 +955,7 @@ namespace StealTheMonaLisa
                             col.GameObjectDraw(spriteBatch);
 
                         }
-                        GMenus.Game(spriteBatch, p1.Health, p1.Stamina);
+                        GMenus.Game(spriteBatch, p1.Health, p1.Stamina, camPos);
                         
 
                         //spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
@@ -995,8 +999,10 @@ namespace StealTheMonaLisa
 
                 case GameState.PauseMenu:
                     {
-                        spriteBatch.Begin();
+                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
 
+                        enemy1.Draw(spriteBatch);
+                        enemy2.Draw(spriteBatch);
                         spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White);
                         GraphicsDevice.Clear(Color.Black);
                         foreach (tileClass col in rects) //draws each collectible that is present in the array
@@ -1006,7 +1012,7 @@ namespace StealTheMonaLisa
 
                         }
                         spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White);
-                        GMenus.GamePauseMenu(spriteBatch);
+                        GMenus.GamePauseMenu(spriteBatch, priceText, camPos);
 
                         spriteBatch.End();
 
@@ -1014,8 +1020,10 @@ namespace StealTheMonaLisa
                     }
                 case GameState.ExitGameConfirmMenu:
                     {
-                        spriteBatch.Begin();
+                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
 
+                        enemy1.Draw(spriteBatch);
+                        enemy2.Draw(spriteBatch);
                         spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White);
                         GraphicsDevice.Clear(Color.Black);
                         foreach (tileClass col in rects) //draws each collectible that is present in the array
@@ -1025,7 +1033,7 @@ namespace StealTheMonaLisa
 
                         }
                         spriteBatch.Draw(spriteSheet, playerLOC, new Rectangle(0, rectOffset, rectWidth, rectHeight), Color.White);
-                        GMenus.ConfirmMenu(spriteBatch);
+                        GMenus.ConfirmMenu(spriteBatch, priceText, camPos);
 
                         spriteBatch.End();
 

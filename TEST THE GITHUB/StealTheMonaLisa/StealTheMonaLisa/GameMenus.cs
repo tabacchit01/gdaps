@@ -257,22 +257,25 @@ namespace StealTheMonaLisa
 
             obj.DrawString(priceText, "CONTRACT\nPRICE:  $" + mis.ContractCost, new Vector2(ContractItemRec.X - 180, ContractItemRec.Y + 262), Color.Black);
 
+
             box1 = BuyButtonRec;
             obj.Draw(buyButton, BuyButtonRec, Color.White);
+            obj.DrawString(priceText, "BUY", new Vector2((box1.X + (box1.Width / 3)) + 5, box1.Y + (box1.Height / 4)), Color.Black);
+
 
             box2 = ExitButtonRec;
             obj.Draw(contractExitButton, ExitButtonRec, Color.White);
         }
-        public void Game(SpriteBatch obj, int health, int stam)
+        public void Game(SpriteBatch obj, int health, int stam, Vector2 move)
         {
             box1 = new Rectangle(0, 0, 0, 0);
             box2 = new Rectangle(0, 0, 0, 0);
 
-            Rectangle faceGuiRec = new Rectangle(5, 5, 270, 122);
-            Rectangle healthBarRec1 = new Rectangle(117, 33, 50, 37);
-            Rectangle healthBarRec2 = new Rectangle(165, 33, 50, 37);
-            Rectangle healthBarRec3 = new Rectangle(213, 33, 40, 37);
-            Rectangle stamBarRec = new Rectangle(117, 72, 120, 20);
+            Rectangle faceGuiRec = new Rectangle(5 + (int)move.X, 5, 270, 122);
+            Rectangle healthBarRec1 = new Rectangle(117 + (int)move.X, 33, 50, 37);
+            Rectangle healthBarRec2 = new Rectangle(165 + (int)move.X, 33, 50, 37);
+            Rectangle healthBarRec3 = new Rectangle(213 + (int)move.X, 33, 40, 37);
+            Rectangle stamBarRec = new Rectangle(117 + (int)move.X, 72, 120, 20);
 
             switch (health)
             {
@@ -304,35 +307,41 @@ namespace StealTheMonaLisa
             obj.Draw(faceGui, faceGuiRec, Color.White);
 
         }
-        public void GamePauseMenu(SpriteBatch obj)
+        public void GamePauseMenu(SpriteBatch obj, SpriteFont outer, Vector2 move)
         {
             box1 = new Rectangle(0, 0, 0, 0);
             box2 = new Rectangle(0, 0, 0, 0);
 
-            Rectangle ContinueRec = new Rectangle(50, 40, 200, 50);
-            Rectangle AbortButtonRec = new Rectangle(50, 120, 300, 50);
+            Rectangle ContinueRec = new Rectangle(50 + (int)move.X, 40, 200, 50);
+            Rectangle AbortButtonRec = new Rectangle(50 + (int)move.X, 120, 300, 50);
 
             box1 = ContinueRec;
             obj.Draw(continueButton, ContinueRec, Color.White);
+            obj.DrawString(outer, "COUNTINUE", new Vector2((box1.X + (box1.Width / 8) - 2) , box1.Y + (box1.Height / 4)), Color.Black);
+
 
             box2 = AbortButtonRec;
             obj.Draw(abortButton, AbortButtonRec, Color.White);
+            obj.DrawString(outer, "ABORT MISSION", new Vector2((box2.X + (box2.Width / 10)) + 10, box2.Y + (box2.Height / 4)), Color.Black);
+
         }
-        public void ConfirmMenu(SpriteBatch obj)
+        public void ConfirmMenu(SpriteBatch obj, SpriteFont outer, Vector2 move)
         {
             tracker = 0;
 
             box1 = new Rectangle(0, 0, 0, 0);
             box2 = new Rectangle(0, 0, 0, 0);
 
-            Rectangle YesButtonRec = new Rectangle(170, 350, 200, 50);
-            Rectangle NoButtonRec = new Rectangle(420, 350, 200, 50);
+            Rectangle YesButtonRec = new Rectangle(170 + (int)move.X, 350, 200, 50);
+            Rectangle NoButtonRec = new Rectangle(420 + (int)move.X  , 350, 200, 50);
 
             box1 = YesButtonRec;
             obj.Draw(yesButton, YesButtonRec, Color.White);
+            obj.DrawString(outer, "YES", new Vector2((box1.X + (box1.Width / 3)) + 5, box1.Y + (box1.Height / 4)), Color.Black);
 
             box2 = NoButtonRec;
             obj.Draw(noButton, NoButtonRec, Color.White);
+            obj.DrawString(outer, "NO", new Vector2((box2.X + (box2.Width / 3)) + 15, box2.Y + (box2.Height / 4)), Color.Black);
         }
         public void MissionSuccess(SpriteBatch obj)
         {

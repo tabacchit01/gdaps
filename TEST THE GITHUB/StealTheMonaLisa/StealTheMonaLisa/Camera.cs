@@ -28,7 +28,7 @@ namespace StealTheMonaLisa
             get { return GraphicsDeviceManager.DefaultBackBufferHeight; }
         }
 
-        public void Update(int x, int y)
+        public Vector2 Update(int x, int y)
         {
             position.X = x - (ScreenWidth / 2);
             //position.Y = y - (ScreenHeight / 2);
@@ -43,6 +43,7 @@ namespace StealTheMonaLisa
             }*/
 
             viewMatrix = Matrix.CreateTranslation(new Vector3(-position, 0));
+            return position;
         }
     }
 }
