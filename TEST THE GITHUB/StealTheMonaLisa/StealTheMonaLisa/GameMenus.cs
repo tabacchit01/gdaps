@@ -92,16 +92,26 @@ namespace StealTheMonaLisa
 
         // Methods to draw menus
 
+        /// <summary>
+        /// Draw the title screen of the game
+        /// </summary>
+        /// <param name="obj">used to draw to the screen</param>
+        /// <param name="inner">small text font</param>
+        /// <param name="outer">large text font</param>
+        /// <param name="frame">how many frames have passed</param>
+        /// <param name="end">tells us wether the sentence has ended</param>
+        /// <param name="letter">gives us the next letter to type next</param>
         public void TitleMenu(SpriteBatch obj, SpriteFont inner, SpriteFont outer, int frame, bool end, char letter)
         {
-            StringBuilder title = new StringBuilder();           
-            int x = 30;
+            StringBuilder title = new StringBuilder(); // String Builder lets you add and remove characters to a string smoothy       
 
             Rectangle StartButtonRec = new Rectangle(30, 310, 300, 50);
             box1 = StartButtonRec;
 
+            // if the sentence is done typing to the screen
             if (end)
             {
+                // This if statement makes the bar blink at the end
                 if (frame == 1)
                 {
                     if (on)
@@ -117,6 +127,7 @@ namespace StealTheMonaLisa
                     }                  
 
                 }
+                // EnterNum keep tracks how many times the bar blinks
                 if (enterNum >= 1)
                 {
                     obj.DrawString(outer, "Press Enter To Begin . . .", new Vector2(30, 380), Color.White); //210
@@ -174,6 +185,7 @@ namespace StealTheMonaLisa
                 }
                 
             }
+                //if the sentencde is not finished typing to the screen
             else
             {
                 if (frame == 1)
@@ -185,26 +197,38 @@ namespace StealTheMonaLisa
                 }
             }
             
-
-
             obj.DrawString(outer, ttl + bar, new Vector2(30, 60), Color.White);
-            /*
+
+
+            /* OLD CODE
             obj.DrawString(outer, "Stealing\nswop", new Vector2(30, 60), Color.White);
             obj.DrawString(outer, "The", new Vector2(30, 100), Color.White);
             obj.DrawString(outer, "Mona", new Vector2(30, 140), Color.White);
             obj.DrawString(outer, "Lisa", new Vector2(30, 180), Color.White);*/
             
-
-
-
         }
-        public void WorldMap(SpriteBatch obj, Color highLight, bool openClose)
+
+
+        /// <summary>
+        /// Draws the world map to the screen
+        /// </summary>
+        /// <param name="obj">used to draw to the screen</param>
+        /// <param name="highLight">highlights an object on the screen if the mouse is hovering over it</param>
+        /// <param name="openClose">Lets us know if the player stats menu is open or closed</param>
+        public void WorldMap(SpriteBatch obj, Color highLight, bool openClose, GameStats gstats, SpriteFont outer)
         {
+            // sets world map to the size of the screen
             Rectangle WorldMapTextureRec = new Rectangle(0, 0, obj.GraphicsDevice.Viewport.Width, obj.GraphicsDevice.Viewport.Height);
+            
+
+
+            // sets the button for the player stat
             if (tracker == 0)
             {
                 Rectangle inOutButtonRec = new Rectangle(0, (obj.GraphicsDevice.Viewport.Height / 2) - 28, 30, 56);
-                Rectangle steelRec = new Rectangle(-150, 0, 150, obj.GraphicsDevice.Viewport.Height);
+                Rectangle steelRec = new Rectangle(-150, 0, 150, obj.GraphicsDevice.Viewport.Height); //-150
+             
+
 
                 box3 = inOutButtonRec;
                 box4 = steelRec;
@@ -212,28 +236,75 @@ namespace StealTheMonaLisa
                 tracker += 1;
             }
 
+            Rectangle faceRec = new Rectangle((box4.Width / 5) + box4.X, 30, 80, 80); //150
+
+            Rectangle levelRec = new Rectangle((box4.Width / 12) + box4.X, 170, 130, 30); //150
+            Rectangle levelBarRec = new Rectangle(levelRec.X + 10, levelRec.Y + 7, (int)(110 * (gstats.LevelExp / 100)), 15); //150
+
+            Rectangle infamyRec = new Rectangle((box4.Width / 12) + box4.X, 270, 130, 30); //150
+            Rectangle infamyBarRec = new Rectangle(infamyRec.X + 10, infamyRec.Y + 7, (int)(110 * (gstats.InfamyExp / 100)), 15); //150
+
+            Rectangle moneyRec = new Rectangle((box4.Width / 12) + box4.X, 390, 130, 70); //150
+            //OLD CODE
             //Rectangle ContractPinRec = new Rectangle(200, 110, 10, 10);
 
 
-
+            // Draws the world map
             obj.Draw(worldMapTexture, WorldMapTextureRec, Color.White);
 
 
+            // Draws the player stats if the button is pressed
             if (openClose == false)
             {
                 obj.Draw(steel, box4, Color.White);
+
+                obj.Draw(startButton, faceRec, Color.White);
+                obj.Draw(startButton, levelRec, Color.White);
+                obj.Draw(healthBlock, levelBarRec, Color.White);
+                obj.Draw(startButton, infamyRec, Color.White);
+                obj.Draw(healthBlock, infamyBarRec, Color.Red);
+                obj.Draw(startButton, moneyRec, Color.White);
+
+                obj.DrawString(outer, "LVL:" + gstats.Level, new Vector2((int)levelRec.X + 10, (int)levelRec.Y - 30), Color.White);
+                obj.DrawString(outer, "INFAMY:" + gstats.Infamy, new Vector2((int)infamyRec.X, (int)infamyRec.Y - 30), Color.White);
+                obj.DrawString(outer, " BANK\nACCOUNT:", new Vector2((int)moneyRec.X, (int)moneyRec.Y - 60), Color.White);
+                obj.DrawString(outer, "$" + gstats.Money, new Vector2((int)moneyRec.X + 5, (int)moneyRec.Y + 20), Color.Gold);
+
                 obj.Draw(outButton, box3, highLight);
 
             }
             else if (openClose == true)
             {
                 obj.Draw(steel, box4, Color.White);
+
+                obj.Draw(startButton, faceRec, Color.White);
+                obj.Draw(startButton, levelRec, Color.White);
+                obj.Draw(healthBlock, levelBarRec, Color.White);
+                obj.Draw(startButton, infamyRec, Color.White);
+                obj.Draw(healthBlock, infamyBarRec, Color.Red);
+                obj.Draw(startButton, moneyRec, Color.White);
+
+                obj.DrawString(outer, "LVL:" + gstats.Level, new Vector2((int)levelRec.X + 10, (int)levelRec.Y - 30), Color.White);
+                obj.DrawString(outer, "INFAMY:" + gstats.Infamy, new Vector2((int)infamyRec.X, (int)infamyRec.Y - 30), Color.White);
+                obj.DrawString(outer, " BANK\nACCOUNT:", new Vector2((int)moneyRec.X, (int)moneyRec.Y - 60), Color.White);
+                obj.DrawString(outer, "$" + gstats.Money, new Vector2((int)moneyRec.X + 5, (int)moneyRec.Y + 20), Color.Gold);
+
                 obj.Draw(inButton, box3, highLight);
             }
 
+            //OLD CODE
             //box1 = ContractPinRec;
             //obj.Draw(contractPin, ContractPinRec, Color.White);
         }
+
+
+        /// <summary>
+        /// Draws missions to the world map
+        /// </summary>
+        /// <param name="obj">used to draw to the screen</param>
+        /// <param name="bx">the box size for scaling</param>
+        /// <param name="num">the mission number</param>
+        /// <param name="highLight">if the mission is being highlighted</param>
         public void Mission(SpriteBatch obj, Rectangle bx, int num, Color highLight)
         {
             box1 = new Rectangle(0, 0, 0, 0);
@@ -285,7 +356,7 @@ namespace StealTheMonaLisa
             Rectangle healthBarRec1 = new Rectangle(117 + (int)move.X, 33, 50, 37);
             Rectangle healthBarRec2 = new Rectangle(165 + (int)move.X, 33, 50, 37);
             Rectangle healthBarRec3 = new Rectangle(213 + (int)move.X, 33, 40, 37);
-            Rectangle stamBarRec = new Rectangle(117 + (int)move.X, 72, 120, 20);
+            Rectangle stamBarRec = new Rectangle(117 + (int)move.X, 72, (int)(120 * (stam / 200)), 20);
 
             switch (health)
             {

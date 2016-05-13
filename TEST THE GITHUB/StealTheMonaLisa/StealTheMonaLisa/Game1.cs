@@ -59,11 +59,12 @@ namespace StealTheMonaLisa
 
         // Start Menu Stuff
         bool end; // Tells me when the line text has finished typing
-        int frames; // how im keeping track of frames (Michael)
+        int framesM; // how im keeping track of frames (Michael)
         int letter; // The position of a character in a string
         string title; // The string i want to type (aka the title)
 
         // World Map Stuff
+        int numOfMis;
         int misGen = 0;
         int misNum;
         int time = 0;
@@ -193,7 +194,7 @@ namespace StealTheMonaLisa
             spriteBatch = new SpriteBatch(GraphicsDevice);
             // Testing Player Load
             p1 = new Player1(GraphicsDevice.Viewport.Width/2-125, GraphicsDevice.Viewport.Height - 175, 125, 125, 3, 2, 1);
-            gstats = new GameStats(0, 0, 0, 0.0, 0.0);
+            gstats = new GameStats(100000, 5, 30, 90.0, 50.0);
             spriteSheet = Content.Load<Texture2D>("spriteSheetB.png");
             testImage = Content.Load<Texture2D>("Pizza.png");
             p1.CurrentTexture = testImage;
@@ -243,6 +244,7 @@ namespace StealTheMonaLisa
             items[2] = itemsLv3;
 
             mis = null;
+            numOfMis = 39;
 
             // plugging textures into the Game Menu Class
             GMenus = new GameMenus(startButton, yesButton, noButton, worldMapTexture, contractPin, contractMenu, contractItem, contractExitButton, buyButton, continueButton, abortButton, inButton, outButton, steel, faceGui, healthBlock);
@@ -251,7 +253,7 @@ namespace StealTheMonaLisa
             camPos = new Vector2(0, 0); // Setting up to pulling the camera position from the Camera class
 
             // Start Menu Stuff
-            frames = 10;
+            framesM = 10;
             letter = 0;
             end = false;
             title = "Stealing\nThe\nMona\nLisa";
@@ -827,23 +829,23 @@ namespace StealTheMonaLisa
                 case GameState.StartMenu:
                     {
                         spriteBatch.Begin();
-                        frames -= 1;
-                        if (frames == 0)
+                        framesM -= 1;
+                        if (framesM == 0)
                         {    
                             if(letter < title.Length - 1)
                             {
                                 GMenus.TitleMenu(spriteBatch, text, priceText, frame, end, title[letter]);
-                                frames = 10;
+                                framesM = 10;
                                 letter += 1;
                             }
                             else
                             {
-                                frames = 50;
+                                framesM = 50;
                                 end = true;
                             }
                             
                         }
-                        GMenus.TitleMenu(spriteBatch, text, priceText, frames, end, title[letter]);
+                        GMenus.TitleMenu(spriteBatch, text, priceText, framesM, end, title[letter]);
                         spriteBatch.End();
                         break;
                     }
@@ -872,7 +874,7 @@ namespace StealTheMonaLisa
                             }
 
                         }
-                        GMenus.WorldMap(spriteBatch, highLight, openClose);
+                        GMenus.WorldMap(spriteBatch, highLight, openClose, gstats, priceText);
 
                         //Wanted to make clouds but mono games is a douche
 
@@ -888,11 +890,10 @@ namespace StealTheMonaLisa
 
 
 
-
                         if (misGen == 0)
                         {
                             mis = null;
-                            mis = new Mission[39];
+                            mis = new Mission[numOfMis];
 
                             for (int i = 0; i < mis.Length; i++)
                             {
@@ -986,7 +987,7 @@ namespace StealTheMonaLisa
                     {
                         spriteBatch.Begin();
 
-                        GMenus.WorldMap(spriteBatch, highLight, openClose);
+                        GMenus.WorldMap(spriteBatch, highLight, openClose, gstats, priceText);
                         GMenus.ConfirmMenu(spriteBatch, priceText, camPos);
 
                         spriteBatch.End();
@@ -1001,7 +1002,7 @@ namespace StealTheMonaLisa
                     {
                         spriteBatch.Begin();
 
-                        GMenus.WorldMap(spriteBatch, highLight, openClose);
+                        GMenus.WorldMap(spriteBatch, highLight, openClose, gstats, priceText);
                         GMenus.ContractMenu(spriteBatch, mis[misNum], text, desText, priceText);
 
                         spriteBatch.End();

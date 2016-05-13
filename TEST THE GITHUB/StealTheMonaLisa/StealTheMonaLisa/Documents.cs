@@ -28,6 +28,11 @@ namespace StealTheMonaLisa
             get { return itemDescrpition; }
         }
 
+        /// <summary>
+        /// Randomizes the desription for the items
+        /// </summary>
+        /// <param name="num">the number to decide which description to use</param>
+        /// <returns>returns a description for the item</returns>
         public override string RandomDesc(int num)
         {
             switch (num)
