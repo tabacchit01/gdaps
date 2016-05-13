@@ -24,13 +24,21 @@ namespace StealTheMonaLisa
         Texture2D inButton;
         Texture2D outButton;
         Texture2D steel;
+        Texture2D faceGui;
+        Texture2D healthBlock;
         Rectangle box1;
         Rectangle box2;
         Rectangle box3;
         Rectangle box4;
         int tracker = 0;
+        int lttNum = 0;
+        int enterNum = 0;
+        string ttl = "";
+        string bot = "";
+        string bar = "|";
+        bool on = false;
 
-        public GameMenus(Texture2D startb, Texture2D ybutton, Texture2D nbutton, Texture2D WMtext, Texture2D conPin, Texture2D conM, Texture2D conI, Texture2D conEB, Texture2D bButton, Texture2D conButton, Texture2D abortButt, Texture2D IB, Texture2D OB, Texture2D stl)
+        public GameMenus(Texture2D startb, Texture2D ybutton, Texture2D nbutton, Texture2D WMtext, Texture2D conPin, Texture2D conM, Texture2D conI, Texture2D conEB, Texture2D bButton, Texture2D conButton, Texture2D abortButt, Texture2D IB, Texture2D OB, Texture2D stl, Texture2D guiFc, Texture2D hltBlc)
         {
             startButton = startb;
             yesButton = ybutton;
@@ -46,6 +54,8 @@ namespace StealTheMonaLisa
             inButton = IB;
             outButton = OB;
             steel = stl;
+            faceGui = guiFc;
+            healthBlock = hltBlc;
             box1 = new Rectangle(0, 0, 0, 0);
             box2 = new Rectangle(0, 0, 0, 0);
             box3 = new Rectangle(0, 0, 0, 0);
@@ -72,15 +82,110 @@ namespace StealTheMonaLisa
             get { return box4; }
             set { box4 = value; }
         }
-        public void TitleMenu(SpriteBatch obj, SpriteFont inner, SpriteFont outer)
+        public void TitleMenu(SpriteBatch obj, SpriteFont inner, SpriteFont outer, int frame, bool end, char letter)
         {
-            Rectangle StartButtonRec = new Rectangle(30, 300, 300, 50);
+            StringBuilder title = new StringBuilder();           
+            int x = 30;
+
+            Rectangle StartButtonRec = new Rectangle(30, 310, 300, 50);
             box1 = StartButtonRec;
-            obj.DrawString(outer, "Stealing", new Vector2(30, 60), Color.White);
+
+            if (end)
+            {
+                if (frame == 1)
+                {
+                    if (on)
+                    {
+                        bar = "|";
+                        enterNum += 1;
+                        on = false;
+                    }
+                    else
+                    {
+                        bar = "";
+                        on = true;
+                    }                  
+
+                }
+                if (enterNum >= 1)
+                {
+                    obj.DrawString(outer, "Press Enter To Begin . . .", new Vector2(30, 380), Color.White); //210
+                }
+                if (enterNum >= 3)
+                {
+                    obj.Draw(startButton, StartButtonRec, Color.White);
+                    obj.DrawString(outer, "BEGIN", new Vector2(box1.X + (box1.Width / 3), box1.Y + (box1.Height / 4)), Color.Black);
+                    obj.DrawString(inner, "Or press this button . . .", new Vector2(30, 420), Color.White);
+                    switch (enterNum)
+                    {
+                        case 4:
+                            {
+                                bot = "Wait wut?";
+                                break;
+                            }
+                        case 6:
+                            {
+                                bot = "why do you have a button\n  if you can press ENTER to continue...";
+                                break;
+                            }
+                        case 9:
+                            {
+                                bot = "Who the fuck made this game anyways";
+                                break;
+                            }
+                        case 11:
+                            {
+                                bot = "it's almost like two guys made this\n  game alone...";
+                                break;
+                            }
+                        case 14:
+                            {
+                                bot = "Anyways just go on and play the game";
+                                break;
+                            }
+                        case 18:
+                            {
+                                bot = "...";
+                                break;
+                            }
+                        case 23:
+                            {
+                                bot = "WHY ARE YOU STILL HERE????";
+                                break;
+                            }
+                        case 24:
+                            {
+                                bot = "LEAVE!!!!";
+                                break;
+                            }
+
+                    }
+                    obj.DrawString(inner, "( " + bot + " )", new Vector2(320, 420), Color.White);
+                }
+                
+            }
+            else
+            {
+                if (frame == 1)
+                {
+                    title.Append(letter);
+                    lttNum += 1;
+                    ttl = ttl + title.ToString();
+
+                }
+            }
+            
+
+
+            obj.DrawString(outer, ttl + bar, new Vector2(30, 60), Color.White);
+            /*
+            obj.DrawString(outer, "Stealing\nswop", new Vector2(30, 60), Color.White);
             obj.DrawString(outer, "The", new Vector2(30, 100), Color.White);
             obj.DrawString(outer, "Mona", new Vector2(30, 140), Color.White);
-            obj.DrawString(outer, "Lisa", new Vector2(30, 180), Color.White);
-            obj.Draw(startButton, StartButtonRec, Color.White);
+            obj.DrawString(outer, "Lisa", new Vector2(30, 180), Color.White);*/
+            
+
+
 
         }
         public void WorldMap(SpriteBatch obj, Color highLight, bool openClose)
@@ -157,6 +262,47 @@ namespace StealTheMonaLisa
 
             box2 = ExitButtonRec;
             obj.Draw(contractExitButton, ExitButtonRec, Color.White);
+        }
+        public void Game(SpriteBatch obj, int health, int stam)
+        {
+            box1 = new Rectangle(0, 0, 0, 0);
+            box2 = new Rectangle(0, 0, 0, 0);
+
+            Rectangle faceGuiRec = new Rectangle(5, 5, 270, 122);
+            Rectangle healthBarRec1 = new Rectangle(117, 33, 50, 37);
+            Rectangle healthBarRec2 = new Rectangle(165, 33, 50, 37);
+            Rectangle healthBarRec3 = new Rectangle(213, 33, 40, 37);
+            Rectangle stamBarRec = new Rectangle(117, 72, 120, 20);
+
+            switch (health)
+            {
+                case 0:
+                    {
+                        break;
+                    }
+                case 1:
+                    {
+                        obj.Draw(healthBlock, healthBarRec1, Color.Lime);
+                        break;
+                    }
+                case 2:
+                    {
+                        obj.Draw(healthBlock, healthBarRec1, Color.Lime);
+                        obj.Draw(healthBlock, healthBarRec2, Color.Lime);
+                        break;
+                    }
+                case 3:
+                    {
+                        obj.Draw(healthBlock, healthBarRec1, Color.Lime);
+                        obj.Draw(healthBlock, healthBarRec2, Color.Lime);
+                        obj.Draw(healthBlock, healthBarRec3, Color.Lime);
+                        break;
+                    }
+            }
+            
+            obj.Draw(healthBlock, stamBarRec, Color.Blue);
+            obj.Draw(faceGui, faceGuiRec, Color.White);
+
         }
         public void GamePauseMenu(SpriteBatch obj)
         {

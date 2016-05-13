@@ -41,6 +41,8 @@ namespace StealTheMonaLisa
         Texture2D inButton;
         Texture2D outButton;
         Texture2D steel;
+        Texture2D faceGui;
+        Texture2D healthBlock;
         SpriteFont text;
         SpriteFont desText;
         SpriteFont priceText;
@@ -52,6 +54,11 @@ namespace StealTheMonaLisa
         knife knyfe;
 
         Mission[] mis;
+        bool end;
+        int frames;
+        int letter;
+        string title;
+
         int misGen = 0;
         int misNum;
         int time = 0;
@@ -178,23 +185,26 @@ namespace StealTheMonaLisa
             p1.CurrentTexture = testImage;
 
             // Loading in all the menu textures
-            startButton = Content.Load<Texture2D>("MenuBlock.png");
-            yesButton = Content.Load<Texture2D>("MenuBlock.png");
-            noButton = Content.Load<Texture2D>("MenuBlock.png");
+            startButton = Content.Load<Texture2D>("basicButton.png");
+            yesButton = Content.Load<Texture2D>("basicButton.png");
+            noButton = Content.Load<Texture2D>("basicButton.png");
             worldMapTexture = Content.Load<Texture2D>("WorldMap.jpg");
             contractPin = Content.Load<Texture2D>("RedPin.png");
             contractMenu = Content.Load<Texture2D>("MenuBackground.png");
             contractItem = Content.Load<Texture2D>("Item1.jpg");
             contractExitButton = Content.Load<Texture2D>("ExitButton.png");
-            buyButton = Content.Load<Texture2D>("MenuBlock.png");
-            continueButton = Content.Load<Texture2D>("MenuBlock.png");
-            abortButton = Content.Load<Texture2D>("MenuBlock.png");
+            buyButton = Content.Load<Texture2D>("basicButton.png");
+            continueButton = Content.Load<Texture2D>("basicButton.png");
+            abortButton = Content.Load<Texture2D>("basicButton.png");
             inButton = Content.Load<Texture2D>("InButton.jpg");
             outButton = Content.Load<Texture2D>("OutButton.jpg");
             steel = Content.Load<Texture2D>("steel.jpg");
             text = Content.Load<SpriteFont>("SimplifiedArabicFixed_14");
             desText = Content.Load<SpriteFont>("SimplifiedArabicFixed_10");
             priceText = Content.Load<SpriteFont>("SimplifiedArabicFixed_22");
+            faceGui = Content.Load<Texture2D>("guiFace.png");
+            healthBlock = Content.Load<Texture2D>("health block.png");
+
 
             //Loading in all the items
             items = new List<Item>[3];
@@ -218,7 +228,13 @@ namespace StealTheMonaLisa
 
             mis = null;
 
-            GMenus = new GameMenus(startButton, yesButton, noButton, worldMapTexture, contractPin, contractMenu, contractItem, contractExitButton, buyButton, continueButton, abortButton, inButton, outButton, steel);
+            GMenus = new GameMenus(startButton, yesButton, noButton, worldMapTexture, contractPin, contractMenu, contractItem, contractExitButton, buyButton, continueButton, abortButton, inButton, outButton, steel, faceGui, healthBlock);
+
+
+            frames = 10;
+            letter = 0;
+            end = false;
+            title = "Stealing\nThe\nMona\nLisa";
 
 
             tileA = Content.Load<Texture2D>("tileA.png");
@@ -265,6 +281,11 @@ namespace StealTheMonaLisa
             {
                 case GameState.StartMenu:
                     {
+                        bool cont;
+                        Keys enter = Keys.Enter;
+
+                        cont = SingleKeyPress(enter);
+
                         bool hoveringStart = MousePosistion(GMenus.Box1.X, GMenus.Box1.Y, GMenus.Box1.Height, GMenus.Box1.Width);
                         if (hoveringStart)
                         {
@@ -272,6 +293,10 @@ namespace StealTheMonaLisa
                             {
                                 CurrentState = GameState.WorldMapMenu;
                             }
+                        }
+                        if (cont)
+                        {
+                            CurrentState = GameState.WorldMapMenu;
                         }
                         break;
                     }
@@ -720,8 +745,23 @@ namespace StealTheMonaLisa
             {
                 case GameState.StartMenu:
                     {
-
-                        GMenus.TitleMenu(spriteBatch, text, priceText);
+                        frames -= 1;
+                        if (frames == 0)
+                        {    
+                            if(letter < title.Length - 1)
+                            {
+                                GMenus.TitleMenu(spriteBatch, text, priceText, frame, end, title[letter]);
+                                frames = 10;
+                                letter += 1;
+                            }
+                            else
+                            {
+                                frames = 50;
+                                end = true;
+                            }
+                            
+                        }
+                        GMenus.TitleMenu(spriteBatch, text, priceText, frames, end, title[letter]);
                         break;
                     }
                 case GameState.WorldMapMenu:
@@ -730,16 +770,16 @@ namespace StealTheMonaLisa
                         {
                             if (GMenus.Box4.X != 0)
                             {
-                                GMenus.Box3 = new Rectangle(GMenus.Box3.X + 1, GMenus.Box3.Y, GMenus.Box3.Width, GMenus.Box3.Height);
-                                GMenus.Box4 = new Rectangle(GMenus.Box4.X + 1, GMenus.Box4.Y, GMenus.Box4.Width, GMenus.Box4.Height);
+                                GMenus.Box3 = new Rectangle(GMenus.Box3.X + 2, GMenus.Box3.Y, GMenus.Box3.Width, GMenus.Box3.Height);
+                                GMenus.Box4 = new Rectangle(GMenus.Box4.X + 2, GMenus.Box4.Y, GMenus.Box4.Width, GMenus.Box4.Height);
                             }
                         }
                         else
                         {
                             if (GMenus.Box3.X != 0)
                             {
-                                GMenus.Box3 = new Rectangle(GMenus.Box3.X - 1, GMenus.Box3.Y, GMenus.Box3.Width, GMenus.Box3.Height);
-                                GMenus.Box4 = new Rectangle(GMenus.Box4.X - 1, GMenus.Box4.Y, GMenus.Box4.Width, GMenus.Box4.Height);
+                                GMenus.Box3 = new Rectangle(GMenus.Box3.X - 2, GMenus.Box3.Y, GMenus.Box3.Width, GMenus.Box3.Height);
+                                GMenus.Box4 = new Rectangle(GMenus.Box4.X - 2, GMenus.Box4.Y, GMenus.Box4.Width, GMenus.Box4.Height);
                             }
 
                         }
@@ -869,6 +909,7 @@ namespace StealTheMonaLisa
                             col.GameObjectDraw(spriteBatch);
 
                         }
+                        GMenus.Game(spriteBatch, p1.Health, p1.Stamina);
 
                         //spriteBatch.Draw(p1.CurrentTexture, p1.box, Color.White);
 
@@ -901,7 +942,7 @@ namespace StealTheMonaLisa
                                 break;
 
                         }
-
+                        
                         break;
                     }
 

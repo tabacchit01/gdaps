@@ -85,6 +85,11 @@ namespace StealTheMonaLisa
             set { sprint = value; }
         }
 
+        public int Health
+        {
+            get { return health; }
+            set { health = value; }
+        }
         public int Stamina
         {
             get { return stamina; }
