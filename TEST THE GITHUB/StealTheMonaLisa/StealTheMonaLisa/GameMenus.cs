@@ -10,6 +10,8 @@ namespace StealTheMonaLisa
 {
     class GameMenus
     {
+        #region Variables
+
         Texture2D startButton;
         Texture2D yesButton;
         Texture2D noButton;
@@ -37,6 +39,7 @@ namespace StealTheMonaLisa
         string bot = "";
         string bar = "|";
         bool on = false;
+        #endregion
 
         public GameMenus(Texture2D startb, Texture2D ybutton, Texture2D nbutton, Texture2D WMtext, Texture2D conPin, Texture2D conM, Texture2D conI, Texture2D conEB, Texture2D bButton, Texture2D conButton, Texture2D abortButt, Texture2D IB, Texture2D OB, Texture2D stl, Texture2D guiFc, Texture2D hltBlc)
         {
@@ -62,6 +65,9 @@ namespace StealTheMonaLisa
             box4 = new Rectangle(0, 0, 0, 0);
         }
 
+
+        #region Properties
+
         public Rectangle Box1
         {
             get { return box1; }
@@ -82,6 +88,10 @@ namespace StealTheMonaLisa
             get { return box4; }
             set { box4 = value; }
         }
+        #endregion
+
+        // Methods to draw menus
+
         public void TitleMenu(SpriteBatch obj, SpriteFont inner, SpriteFont outer, int frame, bool end, char letter)
         {
             StringBuilder title = new StringBuilder();           

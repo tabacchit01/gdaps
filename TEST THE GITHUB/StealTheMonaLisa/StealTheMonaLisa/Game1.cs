@@ -47,20 +47,23 @@ namespace StealTheMonaLisa
         SpriteFont desText;
         SpriteFont priceText;
 
-        //Mission Stuff
+        //Mission Items
         MonaLisa monaLisa;
         Dog dog;
         Documents doc;
         knife knyfe;
 
+        // Mission Stuff
         Mission[] mis;
         Vector2 camPos;
-        bool end;
-        int frames;
-        int letter;
-        string title;
 
+        // Start Menu Stuff
+        bool end; // Tells me when the line text has finished typing
+        int frames; // how im keeping track of frames (Michael)
+        int letter; // The position of a character in a string
+        string title; // The string i want to type (aka the title)
 
+        // World Map Stuff
         int misGen = 0;
         int misNum;
         int time = 0;
@@ -68,6 +71,8 @@ namespace StealTheMonaLisa
         bool openClose = false;
         Color highLight = Color.White;
 
+        // Creating a array of items that holds lists 
+        //of items based on their infamy lvl
         List<Item>[] items;
         List<Item> itemsLv1;
         List<Item> itemsLv2;
@@ -188,13 +193,14 @@ namespace StealTheMonaLisa
             spriteBatch = new SpriteBatch(GraphicsDevice);
             // Testing Player Load
             p1 = new Player1(GraphicsDevice.Viewport.Width/2-125, GraphicsDevice.Viewport.Height - 175, 125, 125, 3, 2, 1);
-
             gstats = new GameStats(0, 0, 0, 0.0, 0.0);
             spriteSheet = Content.Load<Texture2D>("spriteSheetB.png");
             testImage = Content.Load<Texture2D>("Pizza.png");
             p1.CurrentTexture = testImage;
 
             // Loading in all the menu textures
+            #region Menu Textures
+
             startButton = Content.Load<Texture2D>("basicButton.png");
             yesButton = Content.Load<Texture2D>("basicButton.png");
             noButton = Content.Load<Texture2D>("basicButton.png");
@@ -214,7 +220,7 @@ namespace StealTheMonaLisa
             priceText = Content.Load<SpriteFont>("SimplifiedArabicFixed_22");
             faceGui = Content.Load<Texture2D>("guiFace.png");
             healthBlock = Content.Load<Texture2D>("health block.png");
-
+            #endregion
 
             //Loading in all the items
             items = new List<Item>[3];
@@ -238,10 +244,13 @@ namespace StealTheMonaLisa
 
             mis = null;
 
+            // plugging textures into the Game Menu Class
             GMenus = new GameMenus(startButton, yesButton, noButton, worldMapTexture, contractPin, contractMenu, contractItem, contractExitButton, buyButton, continueButton, abortButton, inButton, outButton, steel, faceGui, healthBlock);
 
 
-            camPos = new Vector2(0, 0);
+            camPos = new Vector2(0, 0); // Setting up to pulling the camera position from the Camera class
+
+            // Start Menu Stuff
             frames = 10;
             letter = 0;
             end = false;
@@ -277,6 +286,7 @@ namespace StealTheMonaLisa
             // TODO: Unload any non ContentManager content here
         }
 
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -293,8 +303,11 @@ namespace StealTheMonaLisa
             kbstate = Keyboard.GetState();
             mstate = Mouse.GetState();
 
+            // Should switch between Game States
             switch (CurrentState)
             {
+                #region Start Menu
+
                 case GameState.StartMenu:
                     {
                         bool cont;
@@ -316,6 +329,10 @@ namespace StealTheMonaLisa
                         }
                         break;
                     }
+                #endregion
+
+                #region World Map Menu
+
                 case GameState.WorldMapMenu:
                     {
                         //highLight = Color.White; 
@@ -378,6 +395,10 @@ namespace StealTheMonaLisa
 
                         break;
                     }
+                #endregion
+
+                #region Exit World Map Menu
+
                 case GameState.ExitWorldMapMenu:
                     {
                         bool exit = false;
@@ -411,6 +432,10 @@ namespace StealTheMonaLisa
 
                         break;
                     }
+                #endregion
+
+                #region Mission Menu
+
                 case GameState.MissionMenu:
                     {
                         bool exit = false;
@@ -444,6 +469,10 @@ namespace StealTheMonaLisa
                         previouskbstate = kbstate;
                         break;
                     }
+                #endregion
+
+                #region Game
+
                 case GameState.Game:
                     { 
                         // Moves the player
@@ -534,6 +563,7 @@ namespace StealTheMonaLisa
                         EnemyAI(enemy1);
                         EnemyAI(enemy2);
 
+
                         // Handles gravity
                         Gravity(p1);
                         Gravity(enemy1);
@@ -556,6 +586,9 @@ namespace StealTheMonaLisa
                         previouskbstate = kbstate;
                         break;
                     }
+                #endregion
+
+                #region Pause Menu
 
                 case GameState.PauseMenu:
                     {
@@ -589,6 +622,9 @@ namespace StealTheMonaLisa
                         previouskbstate = kbstate;
                         break;
                     }
+                #endregion
+
+                #region Exit Game Conform Menu
                 case GameState.ExitGameConfirmMenu:
                     {
                         bool exit = false;
@@ -622,6 +658,9 @@ namespace StealTheMonaLisa
                         previouskbstate = kbstate;
                         break;
                     }
+                #endregion
+
+                #region Mission Success Menu
                 case GameState.MissionSuccessMenu:
                     {
                         bool cont = false;
@@ -646,6 +685,10 @@ namespace StealTheMonaLisa
                         previouskbstate = kbstate;
                         break;
                     }
+                #endregion
+
+                #region Mission Failure
+
                 case GameState.MissionFailure:
                     {
                         bool cont = false;
@@ -670,6 +713,7 @@ namespace StealTheMonaLisa
                         previouskbstate = kbstate;
                         break;
                     }
+                #endregion
 
             }
             previouskbstate = kbstate;
@@ -679,6 +723,10 @@ namespace StealTheMonaLisa
 
         }
 
+
+        /// <summary>
+        /// This method should build a basic level for now
+        /// </summary>
         private void textTile()
         {
 
@@ -761,6 +809,8 @@ namespace StealTheMonaLisa
 
         }
 
+
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -772,6 +822,8 @@ namespace StealTheMonaLisa
 
             switch (CurrentState)
             {
+                #region StartMenu
+
                 case GameState.StartMenu:
                     {
                         spriteBatch.Begin();
@@ -795,6 +847,10 @@ namespace StealTheMonaLisa
                         spriteBatch.End();
                         break;
                     }
+#endregion
+
+                #region World Map Menu
+
                 case GameState.WorldMapMenu:
                     {
                         spriteBatch.Begin();
@@ -922,6 +978,10 @@ namespace StealTheMonaLisa
 
                         break;
                     }
+                #endregion
+
+                #region Exit World Map Menu
+
                 case GameState.ExitWorldMapMenu:
                     {
                         spriteBatch.Begin();
@@ -933,6 +993,10 @@ namespace StealTheMonaLisa
 
                         break;
                     }
+                #endregion
+
+                #region Mission Menu
+
                 case GameState.MissionMenu:
                     {
                         spriteBatch.Begin();
@@ -944,6 +1008,10 @@ namespace StealTheMonaLisa
 
                         break;
                     }
+                #endregion
+
+                #region Game
+
                 case GameState.Game:
                     {
                         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
@@ -992,10 +1060,23 @@ namespace StealTheMonaLisa
 
                         enemy1.Draw(spriteBatch);
                         enemy2.Draw(spriteBatch);
+                        /*
+                        if (enemy2.Flip == 1)
+                        {
+                            DrawEnemyWalking(SpriteEffects.None);
+                        }
+                        else if (enemy2.Flip == 0)
+                        {
+                            DrawEnemyWalking(SpriteEffects.FlipHorizontally);
+                        }*/
+                        
 
                         spriteBatch.End();
                         break;
                     }
+                #endregion
+
+                #region Pause Menu
 
                 case GameState.PauseMenu:
                     {
@@ -1018,6 +1099,10 @@ namespace StealTheMonaLisa
 
                         break;
                     }
+                #endregion
+
+                #region Exit Game Confirm Menu
+
                 case GameState.ExitGameConfirmMenu:
                     {
                         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.ViewMatrix);
@@ -1039,6 +1124,10 @@ namespace StealTheMonaLisa
 
                         break;
                     }
+                #endregion
+
+                #region Mission Success Menu
+
                 case GameState.MissionSuccessMenu:
                     {
                         spriteBatch.Begin();
@@ -1048,6 +1137,9 @@ namespace StealTheMonaLisa
                         spriteBatch.End();
                         break;
                     }
+                #endregion
+
+                #region Mission Fail
                 case GameState.MissionFailure:
                     {
                         spriteBatch.Begin();
@@ -1057,12 +1149,18 @@ namespace StealTheMonaLisa
                         spriteBatch.End();
                         break;
                     }
+                #endregion
 
             }        
 
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// This should update the animation based on
+        /// how many frames have passed
+        /// </summary>
+        /// <param name="gameTime">getting the in game frames</param>
         private void UpdateAnimation(GameTime gameTime)
         {
 
@@ -1090,6 +1188,11 @@ namespace StealTheMonaLisa
 
         }
 
+
+        /// <summary>
+        /// Draws the main character standing
+        /// </summary>
+        /// <param name="flipSprite">used to flip the sprite the opposite direction</param>
         private void DrawCharacterStanding(SpriteEffects flipSprite)
         {
 
@@ -1097,6 +1200,11 @@ namespace StealTheMonaLisa
 
         }
 
+
+        /// <summary>
+        /// Draws the main character walking
+        /// </summary>
+        /// <param name="flipSprite">used to flip the sprite the opposite direction</param>
         private void DrawCharacterWalking(SpriteEffects flipSprite)
         {
 
@@ -1104,6 +1212,24 @@ namespace StealTheMonaLisa
 
         }
 
+
+        /// <summary>
+        /// Draws the enemy walking
+        /// </summary>
+        /// <param name="flipSprite">used to flip the sprite the opposite direction</param>
+        private void DrawEnemyWalking(SpriteEffects flipSprite)
+        {
+
+            spriteBatch.Draw(spriteSheet, new Vector2 (enemy2.Box.X, enemy2.Box.Y), new Rectangle(frame * rectWidth, 125, rectWidth, rectHeight), Color.White, 0, Vector2.Zero, 1.0f, flipSprite, 0);
+
+        }
+
+
+
+        /// <summary>
+        /// Helper method
+        /// moves the player if keys are pressed
+        /// </summary>
         public void MovePlayer()
         {
             // Sets Previous Position for collision purposes
@@ -1198,6 +1324,11 @@ namespace StealTheMonaLisa
 
         }
 
+
+        /// <summary>
+        /// Creates gravitiy so character stays grounded
+        /// </summary>
+        /// <param name="c">Inputs a player character</param>
         public void Gravity(Character c)
         {
             // Only for player
@@ -1219,6 +1350,13 @@ namespace StealTheMonaLisa
 
         }
 
+
+        /// <summary>
+        /// Helper Method
+        /// Checks if a key is pressed
+        /// </summary>
+        /// <param name="letter">The key that you want to check</param>
+        /// <returns>Returns true if the key asked for is being pressed</returns>
         public bool SingleKeyPress(Keys letter)
         {
             // Checks if the key is being pressed
@@ -1234,6 +1372,16 @@ namespace StealTheMonaLisa
 
         }
 
+
+        /// <summary>
+        /// Helper Method
+        /// Checks where the mouse cusor is on the screen 
+        /// </summary>
+        /// <param name="x">the x mouse position</param>
+        /// <param name="y">the y mouse position</param>
+        /// <param name="boxHeight">the box height region</param>
+        /// <param name="boxWitdh">the box witdh region</param>
+        /// <returns>returns true if the mouse is hovering over the box region</returns>
         public bool MousePosistion(int x, int y, int boxHeight, int boxWitdh)
         {
             if (mstate.Position.Y > y && mstate.Position.Y < (y + boxHeight) && mstate.Position.X > x && mstate.Position.X < (x + boxWitdh))
@@ -1246,6 +1394,11 @@ namespace StealTheMonaLisa
             }
         }
 
+
+        /// <summary>
+        /// Handles a very basic enemy AI
+        /// </summary>
+        /// <param name="c">Should input a enemy character</param>
         public void EnemyAI(Character c)
         {
             c.PrevBox = c.Box;
@@ -1270,7 +1423,6 @@ namespace StealTheMonaLisa
                     c.Flip = 0;
                 }
             }
-
         }
     } 
 }
